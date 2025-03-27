@@ -1,0 +1,145 @@
+[
+  {
+    name: 'feirinha',
+    steps: [
+      'Posicionar na demarcação azul (área de chegada) de matéria prima',
+      'Posicionar o palete branco na área amarela (área de destino)',
+      'Descarregar os produtos',
+      'Strechar o palete de plástico',
+    ],
+  },
+  {
+    name: 'feirinha_alergenico_fs',
+    steps: 
+      'Posicionar na demarcação azul (área de chegada) de matéria prima',
+      'Posicionar o palete laranja na área amarela (área de destino)',
+      'Colocar uma camada de filme de cobertura sobre o palete plástico (vazio)',
+      'Descarregar os produtos',
+      'Strechar o palete de plástico',
+    ],
+  },
+  {
+    name: 'feirinha_alergenico_critico',
+    steps: [
+      'Posicionar na demarcação azul (área de chegada) de matéria prima',
+      'Colocar o macacão azul para manusear o material',
+      'Posicionar o palete laranja na área amarela (área de destino)',
+      'Colocar uma camada de filme de cobertura sobre o palete plástico (vazio)',
+      'Descarregar os produtos',
+      'Streachar o palete de plástico',
+    ],
+  },
+  {
+    name: 'feirinha_activa',
+    timeLimit: 20,
+    description: 'Material sensível ao tempo, limite de 20 minutos',
+    steps: [
+      'Posicionar na demarcação azul (área de chegada) de matéria prima',
+      'Colocar o macacão azul para manusear o material',
+      'Posicionar o palete amarelo na área amarela (área de destino)',
+      'Colocar uma camada de filme de cobertura sobre o palete plástico (vazio)',
+      'Descarregar os produtos',
+      'Streachar o palete de plástico',
+    ],
+  },
+  {
+    name: 'pallet_fechado',
+    steps: [
+      'Posicionar na demarcação azul (área de chegada) de matéria prima',
+      'Posicionar o palete branco na área amarela (área de destino)',
+      'Descarregar os produtos',
+      'Strechar o palete de plástico',
+    ],
+  },
+  {
+    name: 'pallet_fechado_alergenico_fs',
+    steps: [
+      'Posicionar na demarcação azul (área de chegada) de matéria prima',
+      'Posicionar o palete laranja na área amarela (área de destino)',
+      'Colocar uma camada de filme de cobertura sobre o palete plástico (vazio)',
+      'Descarregar os produtos',
+      'Strechar o palete de plástico',
+      'Transferir o palete para fora da área de manipulação',
+    ],
+  },
+  {
+    name: 'palett_fechado_alergênico_critico',
+    steps: [
+      'Posicionar na demarcação azul (área de chegada) de matéria prima',
+      'Colocar o macacão azul para manusear o material',
+      'Posicionar o palete laranja na área amarela (área de destino)',
+      'Colocar uma camada de filme de cobertura sobre o palete plástico (vazio)',
+      'Descarregar os produtos',
+      'Strechar o palete de plástico',
+    ],
+  },
+  {
+    name: 'pallet_fechado_activa',
+    timeLimit: 20,
+    steps: [
+      'Posicionar na demarcação azul (área de chegada) de matéria prima',
+      'Colocar o macacão azul para manusear o material',
+      'Posicionar o palete amarelo na área amarela (área de destino)',
+      'Colocar uma camada de filme de cobertura sobre o palete plástico (vazio)',
+      'Descarregar os produtos',
+      'Strechar o palete de plástico',
+    ],
+  },
+  {
+    name: 'pallet_fechado_rustico',
+    description: 'Fuba, Batata Lutosa e Farinha de Trigo',
+    steps: [
+      'Posicionar na demarcação azul (área de chegada) de matéria prima',
+      'Posicionar o palete laranja na área amarela (área de destino)',
+      'Colocar uma camada de filme de cobertura sobre o palete plástico (vazio)',
+      'Descarregar os produtos',
+      'Strechar no palete de plástico',
+      'Colar cada uma das 4 barcodes em um lado distinto do palete',
+    ],
+  },
+  {
+    name: 'balde_galao',
+    steps: [
+      'Posicionar na demarcação azul (área de chegada) de matéria prima',
+      'Posicionar o palete branco na área amarelo (área de destino)',
+      'Descarregar os produtos',
+      'Strechar o palete de plástico',
+    ],
+  },
+  {
+    name: 'balde_galao_fs',
+    steps: [
+      'Posicionar na demarcação azul (área de chegada) de matéria prima',
+      'Posicionar o palete laranja na área amarelo (área de destino)',
+      'Descarregar os produtos',
+      'Strechar o palete de plástico',
+    ],
+  },
+  {
+    name: 'polpa',
+    steps: [
+      'Posicionar na demarcação azul (área de chegada) de matéria prima',
+      'Posicionar o container de plástico na área amarelo (área de destino)',
+      'Descarregar os produtos',
+      'Recolar a UC, que originalmente veio no palete, no container',
+    ],
+  },
+  {
+    name: 'pallet_fechado_mole',
+    steps: [
+      'Posicionar na demarcação azul (área de chegada) de matéria prima',
+      'Posicionar o palete branco na área amarelo (área de destino)',
+      'Descarregar os produtos',
+      'Strechar o palete de plástico',
+    ],
+  },
+  {
+    name: 'material_unico',
+    steps: [
+      'Posicionar na demarcação azul (área de chegada) de matéria prima',
+      'Posicionar o palete branco na área amarela (área de destino)',
+      'Descarregar os produtos',  
+      'Strechar o palete de plástico',
+    ],
+  },
+]

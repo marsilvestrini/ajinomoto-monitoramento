@@ -1,0 +1,105 @@
+{
+  "procedimentos": [
+    {
+      "nome": "feirinha",
+      "info": [
+        {"expected_macacao_color": "macacao_branco"},
+        {"expected_pallet_color": "branco"},
+        {"expected_pallet_class": "pallet_descoberto"}
+      ],
+      "ordem": "[self.startTracker, self.macacaoTracker, self.palletTracker, self.pacoteTracker, self.stretchTracker]",
+      "db_command_etapas": "[self.startTracker.statusPassoStart, self.palletTracker.statusPassoCollor, self.pacoteTracker.statusPassoProduto, self.stretchTracker.statusPassoStretch, None, None]",
+      "db_command_alertas": "self.startTracker.alertPassoStart + self.palletTracker.alertPassoCollor + self.pacoteTracker.alertPassoProduto + self.stretchTracker.alertPassoStretch"
+    },
+    {
+      "nome": "feirinha_alergenico_fs",
+      "info": [
+        {"expected_macacao_color": "macacao_branco"},
+        {"expected_pallet_color": "laranja"},
+        {"expected_pallet_class": "pallet_coberto"}
+      ],
+      "ordem": "[self.startTracker, self.macacaoTracker, self.palletTracker, self.pacoteTracker, self.stretchTracker]",
+      "db_command_etapas": "[self.startTracker.statusPassoStart, self.palletTracker.statusPassoCollor, self.palletTracker.statusPassoClassePallet, self.pacoteTracker.statusPassoProduto, self.stretchTracker.statusPassoStretch, None]",
+      "db_command_alertas": "self.startTracker.alertPassoStart + self.palletTracker.alertPassoCollor + self.palletTracker.alertPassoClassePallet + self.pacoteTracker.alertPassoProduto + self.stretchTracker.alertPassoStretch"
+    },
+    {
+      "nome": "feirinha_alergenico_critico",
+      "info": [
+        {"expected_macacao_color": "macacao_azul"},
+        {"expected_pallet_color": "laranja"},
+        {"expected_pallet_class": "pallet_coberto"}
+      ],
+      "ordem": "[self.startTracker, self.macacaoTracker, self.palletTracker, self.pacoteTracker, self.stretchTracker]",
+      "db_command_etapas": "[self.startTracker.statusPassoStart, self.macacaoTracker.statusPassoMacacao, self.palletTracker.statusPassoCollor, self.palletTracker.statusPassoClassePallet, self.pacoteTracker.statusPassoProduto, self.stretchTracker.statusPassoStretch]",
+      "db_command_alertas": "self.startTracker.alertPassoStart + self.macacaoTracker.alertPassoMacacao + self.palletTracker.alertPassoCollor + self.palletTracker.alertPassoClassePallet + self.pacoteTracker.alertPassoProduto + self.stretchTracker.alertPassoStretch"
+    },
+    {
+      "nome": "feirinha_activa",
+      "info": [
+        {"expected_macacao_color": "macacao_azul"},
+        {"expected_pallet_color": "amarelo"},
+        {"expected_pallet_class": "pallet_coberto"}
+      ],
+      "ordem": "[self.startTracker, self.macacaoTracker, self.palletTracker, self.pacoteTracker, self.stretchTracker]",
+      "db_command_etapas": "[self.startTracker.statusPassoStart, self.macacaoTracker.statusPassoMacacao, self.palletTracker.statusPassoCollor, self.palletTracker.statusPassoClassePallet, self.pacoteTracker.statusPassoProduto, self.stretchTracker.statusPassoStretch]",
+      "db_command_alertas": "self.startTracker.alertPassoStart + self.macacaoTracker.alertPassoMacacao + self.palletTracker.alertPassoCollor + self.palletTracker.alertPassoClassePallet + self.pacoteTracker.alertPassoProduto + self.stretchTracker.alertPassoStretch"
+    },
+    {
+      "nome": "pallet_fechado",
+      "info": [
+        {"expected_macacao_color": "macacao_branco"},
+        {"expected_pallet_color": "branco"},
+        {"expected_pallet_class": "pallet_descoberto"}
+      ],
+      "ordem": "[self.startTracker, self.macacaoTracker, self.palletTracker, self.pacoteTracker, self.stretchTracker]",
+      "db_command_etapas": "[self.startTracker.statusPassoStart, self.palletTracker.statusPassoCollor, self.pacoteTracker.statusPassoProduto, self.stretchTracker.statusPassoStretch, None, None]",
+      "db_command_alertas": "self.startTracker.alertPassoStart + self.palletTracker.alertPassoCollor + self.pacoteTracker.alertPassoProduto + self.stretchTracker.alertPassoStretch"
+    },
+    {
+      "nome": "pallet_fechado_alergenico_fs",
+      "info": [
+        {"expected_macacao_color": "macacao_branco"},
+        {"expected_pallet_color": "laranja"},
+        {"expected_pallet_class": "pallet_coberto"}
+      ],
+      "ordem": "[self.startTracker, self.macacaoTracker, self.palletTracker, self.pacoteTracker, self.stretchTracker]",
+      "db_command_etapas": "[self.startTracker.statusPassoStart, self.palletTracker.statusPassoCollor, self.palletTracker.statusPassoClassePallet, self.pacoteTracker.statusPassoProduto, self.stretchTracker.statusPassoStretch, None]",
+      "db_command_alertas": "self.startTracker.alertPassoStart + self.palletTracker.alertPassoCollor + self.palletTracker.alertPassoClassePallet + self.pacoteTracker.alertPassoProduto + self.stretchTracker.alertPassoStretch"
+    },
+    {
+      "nome": "palett_fechado_alergênico_critico",
+      "info": [
+        {"expected_macacao_color": "macacao_azul"},
+        {"expected_pallet_color": "laranja"},
+        {"expected_pallet_class": "pallet_coberto"}
+      ],
+      "ordem": "[self.startTracker, self.macacaoTracker, self.palletTracker, self.pacoteTracker, self.stretchTracker]",
+      "db_command_etapas": "[self.startTracker.statusPassoStart, self.macacaoTracker.statusPassoMacacao, self.palletTracker.statusPassoCollor, self.palletTracker.statusPassoClassePallet, self.pacoteTracker.statusPassoProduto, self.stretchTracker.statusPassoStretch]",
+      "db_command_alertas": "self.startTracker.alertPassoStart + self.macacaoTracker.alertPassoMacacao + self.palletTracker.alertPassoCollor + self.palletTracker.alertPassoClassePallet + self.pacoteTracker.alertPassoProduto + self.stretchTracker.alertPassoStretch"
+    },
+    {
+      "nome": "pallet_fechado_activa",
+      "info": [
+        {"expected_macacao_color": "macacao_azul"},
+        {"expected_pallet_color": "amarelo"},
+        {"expected_pallet_class": "pallet_coberto"}
+      ],
+      "ordem": "[self.startTracker, self.macacaoTracker, self.palletTracker, self.pacoteTracker, self.stretchTracker]",
+      "db_command_etapas": "[self.startTracker.statusPassoStart, self.macacaoTracker.statusPassoMacacao, self.palletTracker.statusPassoCollor, self.palletTracker.statusPassoClassePallet, self.pacoteTracker.statusPassoProduto, self.stretchTracker.statusPassoStretch]",
+      "db_command_alertas": "self.startTracker.alertPassoStart + self.macacaoTracker.alertPassoMacacao + self.palletTracker.alertPassoCollor + self.palletTracker.alertPassoClassePallet + self.pacoteTracker.alertPassoProduto + self.stretchTracker.alertPassoStretch"
+    }
+  ],
+
+  "timeouts": [
+    {
+      "spectingStart": 60,
+      "spectingMacacao": 60,
+      "spectingPalletColor": 60,
+      "spectingPalletClass": 60,
+      "spectingStrech": 60,
+      "spectingPacotes_timeover": 120,
+      "spectingPacotes_timeout": 15
+
+    }
+  ]
+}
