@@ -38,6 +38,9 @@ class PacoteTracker:
         with open(os.getenv('JSON_PATH'), 'r', encoding='utf-8') as arquivo:
             self.dados = json.load(arquivo)
 
+        self.required_time = self.dados['required_times'][0]['spectingPacotes']-1  # Segundos necessários para interromper a inspeção
+        
+
     def is_inside_roi(self, box):
         x1, y1, x2, y2 = box
         center_x, center_y = (x1 + x2) // 2, (y1 + y2) // 2
@@ -95,7 +98,7 @@ class PacoteTracker:
                 self.last_detection_time = time.time()
                 self.start_time = time.time()
 
-            if time.time() - self.start_time > self.dados['timeouts'][0]['spectingPacotes_timeover']-1:
+            if time.time() - self.start_time > self.dados['timeouts'][0]['spectingPacotes']-1:
                 self.statusPassoProduto = False
                 json_to_send = {"Descarregar os produtos": self.statusPassoProduto}
                 self.messenger_passos.send_message(json_to_send)
@@ -143,7 +146,7 @@ class PacoteTracker:
             if roi_detections:
                 self.last_detection_time = time.time()
             else:
-                if time.time() - self.last_detection_time > self.dados['timeouts'][0]['spectingPacotes_timeout']-1:
+                if time.time() - self.last_detection_time > self.required_time:
                     self.statusPassoProduto = True
                     json_to_send = {"Descarregar os produtos": self.statusPassoProduto}
                     self.messenger_passos.send_message(json_to_send)

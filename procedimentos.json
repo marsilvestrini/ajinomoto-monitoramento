@@ -97,8 +97,14 @@
       "spectingPalletColor": 60,
       "spectingPalletClass": 60,
       "spectingStrech": 60,
-      "spectingPacotes_timeover": 120,
-      "spectingPacotes_timeout": 15
+      "spectingPacotes": 120
+    }
+  ],
+
+  "required_times": [
+    {
+      "spectingStrech": 16,
+      "spectingPacotes": 16
 
     }
   ]
