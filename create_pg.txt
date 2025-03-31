@@ -12,15 +12,18 @@ CREATE TABLE procedimentos (
     etapa_4 BOOLEAN,
     etapa_5 BOOLEAN,
     etapa_6 BOOLEAN,
+    etapa_7 BOOLEAN,
     status_geral BOOLEAN GENERATED ALWAYS AS (
         CASE 
             WHEN (etapa_1 = FALSE OR etapa_2 = FALSE OR etapa_3 = FALSE OR 
                   etapa_4 = FALSE OR (etapa_5 IS NOT NULL AND etapa_5 = FALSE) OR 
-                  (etapa_6 IS NOT NULL AND etapa_6 = FALSE)) 
+                  (etapa_6 IS NOT NULL AND etapa_6 = FALSE) OR
+                  (etapa_7 IS NOT NULL AND etapa_7 = FALSE)) 
             THEN FALSE
             WHEN (etapa_1 IS TRUE AND etapa_2 IS TRUE AND etapa_3 IS TRUE AND 
                   etapa_4 IS TRUE AND (etapa_5 IS NULL OR etapa_5 IS TRUE) AND 
-                  (etapa_6 IS NULL OR etapa_6 IS TRUE)) 
+                  (etapa_6 IS NULL OR etapa_6 IS TRUE) AND
+                  (etapa_7 IS NULL OR etapa_7 IS TRUE)) 
             THEN TRUE
             ELSE NULL
         END
