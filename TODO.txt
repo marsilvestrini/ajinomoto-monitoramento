@@ -5,26 +5,30 @@ reunião:
 - criar procedimento de remoção de pallet strechado (final) - rede 5
 - transformar qr code numa lista pois podem chegar diferente
 
-0 ok - transformar qr code numa lista pois podem chegar diferente
-1 ok - criar rede 5 - identificação de presença ou ausencia de pallet completo - (2 classes - pallet e vazio)
-2 ok - usa rede 5 no procedimento 1 - identificação da carga
-3 - criar novo procedimento de remoção de pallet da descarga
-4 - rede de pallet identifica o chão como pallet_descoberto -> adicionar classes: vazio e pessoa
-5 - ok aumentar o tempo de strechamento 
-6 - melhorar a rede 4 - treinar com L e adicionar classe pessoa
----
-7 - fazer rede de identificação de etiqueta lateral (rede 6)
-8 - fazer um tracker pra captura das etiquetas laterais
-9 - arrumar que quando cancela procedimento sem procedimento rodando ele da erro
+0 ok -              transformar qr code numa lista pois podem chegar diferente
+1 ok -              criar rede 5 - identificação de presença ou ausencia de pallet completo - (2 classes - pallet e vazio)
+2 ok -              usa rede 5 no procedimento 1 - identificação da carga
+3 -                 criar novo procedimento de remoção de pallet da descarga
+4 ok -              rede 2 identifica o chão como pallet_descoberto -> adicionar classes: vazio e pessoa 
+5 ok -              aumentar o tempo de strechamento 
+6 ok -              melhorar a rede 4 - treinar com L e adicionar classe pessoa
+7 ok -              colocar uma coluna a mais no database pra adicionar o novo passo
+8 baixando videos - validar redes 1, 2, 4
 
+* - atualizar os tempos de contabilização de tempo usando o json
+* - forçar o foco da rede no ROI para todos os procedimentos 
+* - eu acho que algumas logicas de contabilização de tempo de procedimento estão erradas
+* - na detecção de classe do pallet, fazer pular quando classe for descoberta
+* - calibrar a detecção de cores do pallet de acordo com as gravações - adicionar também, o chão vazio como cor
 
 * - após a adição da classe pessoa na rede 1, arrumar o tracking e a emissão de alertas pra produtos sem etiqueta
-* - dockerizar
 * - descarregamento de produto pula etapa mesmo não tendo todos os pacotes com etiqueta colada
-* - na detecção de classe do pallet, fazer pular quando classe for descoberta
-* - colocar uma coluna a mais no database pra adicionar o novo passo
-* - forçar o foco da rede no ROI para todos os procedimentos 
+
+* - fazer rede de identificação de etiqueta lateral (rede 6)
+* - fazer um tracker pra captura das etiquetas laterais
 * - quando manda a mensagem de cancelamento sem ter procedimento ativo quebra o sv (uma solução seria adicionar um verificador)
-* - eu acho que algumas logicas de contabilização de tempo de procedimento estão erradas
-* - nas redes, ignorar a identificação de pessoas???
-* - atualizar os tempos de contabilização de tempo usando o json
+* - fazer o emit alerta ser um tópico da api main
+* - dockerizar
+
+? - tirar o resize dos procedimentos
+? - nas redes, ignorar a identificação de pessoas???
