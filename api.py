@@ -7,6 +7,7 @@ from processes.palletTracker import PalletTracker
 from processes.stretchTracker import StretchTracker
 from processes.startTracker import StartTracker
 from processes.macacaoTracker import MacacaoTracker
+from processes.finishTracker import FinishTracker
 from pg_config.pg_config import ProcedimentoManager
 from datetime import datetime
 from video_config.video_capture import VideoCapture
@@ -88,15 +89,16 @@ class InspectProcedure:
         self.expected_macacao_color = None
 
         # Initialize trackers
-        # self.palletTracker = PalletTracker(self.model_rede2, self.expected_color, self.expected_pallet_class)
-        # self.macacaoTracker = MacacaoTracker(self.model_rede3, self.expected_macacao_color)
+        self.palletTracker = PalletTracker(self.model_rede2, self.expected_color, self.expected_pallet_class)
+        self.macacaoTracker = MacacaoTracker(self.model_rede3, self.expected_macacao_color)
 
         self.startTracker = StartTracker(self.model_rede5)
         self.pacoteTracker = PacoteTracker(self.model_rede1)
         self.stretchTracker = StretchTracker(self.model_rede4)
+        self.finishTracker = FinishTracker(self.model_rede5)
         
 
-        self.tracker_order = [self.startTracker, self.macacaoTracker, self.palletTracker, self.pacoteTracker, self.stretchTracker]
+        self.tracker_order = [self.startTracker, self.macacaoTracker, self.palletTracker, self.pacoteTracker, self.stretchTracker, self.finishTracker]
         self.tracker_index = 0
 
         self.current_tracker = self.tracker_order[0]  # Começa com o PalletTracker

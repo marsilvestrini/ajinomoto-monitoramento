@@ -8,27 +8,32 @@ reunião:
 0 ok -              transformar qr code numa lista pois podem chegar diferente
 1 ok -              criar rede 5 - identificação de presença ou ausencia de pallet completo - (2 classes - pallet e vazio)
 2 ok -              usa rede 5 no procedimento 1 - identificação da carga
-3 -                 criar novo procedimento de remoção de pallet da descarga
+3 ok -              criar novo procedimento de remoção de pallet da descarga
 4 ok -              rede 2 identifica o chão como pallet_descoberto -> adicionar classes: vazio e pessoa 
 5 ok -              aumentar o tempo de strechamento 
 6 ok -              melhorar a rede 4 - treinar com L e adicionar classe pessoa
 7 ok -              colocar uma coluna a mais no database pra adicionar o novo passo
-8 baixando videos - validar redes 1, 2, 4
+8 ok -              validar redes 1(nok), 2(ok), 4(nok)
+    8.1 -           rede 1 estag anotando pacote branco
+    8.2 -           quase perfeito, anotar mais algumas imagens (ja fiz upload)
 
-* - atualizar os tempos de contabilização de tempo usando o json
+* - atualizar os tempos de contabilização de tempo usando o json (stretch e produtos ok)
 * - forçar o foco da rede no ROI para todos os procedimentos 
 * - eu acho que algumas logicas de contabilização de tempo de procedimento estão erradas
 * - na detecção de classe do pallet, fazer pular quando classe for descoberta
 * - calibrar a detecção de cores do pallet de acordo com as gravações - adicionar também, o chão vazio como cor
 
 * - após a adição da classe pessoa na rede 1, arrumar o tracking e a emissão de alertas pra produtos sem etiqueta
-* - descarregamento de produto pula etapa mesmo não tendo todos os pacotes com etiqueta colada
+* - descarregamento de produto pula etapa mesmo não tendo todos os pacotes com etiqueta colada (acho que é o método de contabilização de tempo)
 
 * - fazer rede de identificação de etiqueta lateral (rede 6)
 * - fazer um tracker pra captura das etiquetas laterais
-* - quando manda a mensagem de cancelamento sem ter procedimento ativo quebra o sv (uma solução seria adicionar um verificador)
+
+* - adicionar os trackers e a etapa 7 ao gerenciamento do db 
+* - adicionar o restante dos procedimentos
 * - fazer o emit alerta ser um tópico da api main
 * - dockerizar
 
+? - quando manda a mensagem de cancelamento sem ter procedimento ativo quebra o sv (uma solução seria adicionar um verificador)
 ? - tirar o resize dos procedimentos
-? - nas redes, ignorar a identificação de pessoas???
+? - nas redes, ignorar a identificação de pessoas? (ignorar nas redes: 2)
