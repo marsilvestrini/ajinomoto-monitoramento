@@ -24,7 +24,6 @@ class MacacaoTracker:
         
         self.isSpecting = True
         self.detection_times = []  # Lista para armazenar os tempos de detecção
-        self.required_time = 6  # Segundos necessários para interromper a inspeção
         self.statusPassoMacacao = False
         self.alertPassoMacacao = ''
         self.timeout_start = None  # Para o tempo limite de 60 segundos
@@ -32,6 +31,9 @@ class MacacaoTracker:
 
         with open(os.getenv('JSON_PATH'), 'r', encoding='utf-8') as arquivo:
             self.dados = json.load(arquivo)
+
+        self.required_time = self.dados['required_times'][0]['spectingMacacao']-1  # Segundos necessários sem detecção para confirmar remoção
+          
 
     def process_video(self, frame):
         try:

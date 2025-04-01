@@ -106,8 +106,13 @@
   "required_times": [
     {
       "spectingStrech": 16,
-      "spectingPacotes": 16
-
+      "spectingPacotes": 16,
+      "spectingStart": 16,
+      "spectingFinish": 16,
+      "spectingMacacao": 16,
+      "spectingPalletColor": 16,
+      "spectingPalletClass": 16
+      
     }
   ]
 }

@@ -44,6 +44,10 @@ class PalletTracker:
 
         with open(os.getenv('JSON_PATH'), 'r', encoding='utf-8') as arquivo:
             self.dados = json.load(arquivo)
+        
+        self.required_time_classe = self.dados['required_times'][0]['spectingPalletClass']-1  # Segundos necessários sem detecção para confirmar remoção
+        self.required_time_color = self.dados['required_times'][0]['spectingPalletColor']-1  # Segundos necessários sem detecção para confirmar remoção
+
 
     def closest_color(self, rgb):
         min_distance = float("inf")
@@ -130,7 +134,7 @@ class PalletTracker:
                             self.start_time = time.time()  # Inicia a contagem de tempo
                         else:
                             elapsed_time = time.time() - self.start_time
-                            if elapsed_time >= 5:  # 5 segundos
+                            if elapsed_time >= self.required_time_color: 
                                 print(f"[Pallet Tracker] Cor final definida: {dominant_color}")
                                 self.start_time = None
                                 self.spectingColor = False
@@ -169,7 +173,7 @@ class PalletTracker:
                                     self.start_time = time.time()  # Inicia a contagem de tempo
                                 else:
                                     elapsed_time = time.time() - self.start_time
-                                    if elapsed_time >= 5:  # 5 segundos
+                                    if elapsed_time >= self.required_time_classe: 
                                         print(f"[Pallet Tracker] Classe de pallet definida: {label}")
                                         self.start_time = None
                                         self.spectingPlastic = False

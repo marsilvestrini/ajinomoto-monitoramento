@@ -24,7 +24,6 @@ class FinishTracker:
 
         self.isTracking = False
         self.detection_times = []  # Lista para armazenar os tempos de não detecção
-        self.required_time = 6  # Segundos necessários sem detecção para confirmar remoção
         self.statusPassoFinish = False
         self.alertPassoFinish = ''
         self.timeout_start = None  # Para o tempo limite de 60 segundos
@@ -33,6 +32,8 @@ class FinishTracker:
 
         with open(os.getenv('JSON_PATH'), 'r', encoding='utf-8') as arquivo:
             self.dados = json.load(arquivo)
+
+        self.required_time = self.dados['required_times'][0]['spectingFinish']-1  # Segundos necessários sem detecção para confirmar remoção
 
     def process_video(self, frame):
         try:
