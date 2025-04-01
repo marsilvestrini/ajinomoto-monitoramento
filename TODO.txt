@@ -22,7 +22,7 @@ reunião:
 
 --- < falei na daily
 
-* -                 na detecção de classe do pallet, fazer pular quando classe for descoberta
+* ok -              na detecção de classe do pallet, fazer pular quando classe for descoberta
 * -                 calibrar a detecção de cores do pallet de acordo com as gravações - adicionar também, o chão vazio como cor
 
 * -                 após a adição da classe pessoa na rede 1, arrumar o tracking e a emissão de alertas pra produtos sem etiqueta

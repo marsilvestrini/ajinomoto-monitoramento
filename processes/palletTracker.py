@@ -124,9 +124,13 @@ class PalletTracker:
                     self.spectingColor = False
                     self.spectingPlastic = True
                     self.timeout_start = time.time()  # Reinicia o tempo limite para o próximo passo
-
                     json_alert = {"alerta": True}
                     self.messenger_alertas.send_message(json_alert)
+                    if self.expected_pallet_class == "pallet_descoberto":
+                        print(f"[Pallet Tracker] Classe de pallet esperada == descoberta, pulando etapa")
+                        self.spectingPlastic = False
+                        self.isSpecting = False ## if classe == descoberto jump step
+
                 else:
                     dominant_color = self.get_dominant_color(frame, self.roi)
                     if self.expected_color == dominant_color:
@@ -143,6 +147,10 @@ class PalletTracker:
                                 self.messenger_passos.send_message(json_to_send)
                                 self.spectingPlastic = True
                                 self.timeout_start = time.time()  # Reinicia o tempo limite para o próximo passo
+                                if self.expected_pallet_class == "pallet_descoberto":
+                                    print(f"[Pallet Tracker] Classe de pallet esperada == descoberta, pulando etapa")
+                                    self.spectingPlastic = False
+                                    self.isSpecting = False ## if classe == descoberto jump step
                     else:
                         self.start_time = None  # Reseta o tempo se a cor não for a esperada
             
