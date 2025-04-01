@@ -33,8 +33,10 @@ class PalletTracker:
             "laranja": (0, 165, 255),
             "amarelo": (0, 255, 255),
             "azul": (255, 0, 0),
-            "branco": (255, 255, 255),
+            "branco": (200, 205, 200),
+            "vazio": (146, 155, 153)
         }
+        
         self.roi = [215, 161, 120, 246]  # x, y, w, h
         self.start_time = None  # Para contagem de tempo
         self.timeout_start = None  # Para o tempo limite de 60 segundos
