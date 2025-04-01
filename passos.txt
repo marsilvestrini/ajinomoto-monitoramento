@@ -6,16 +6,18 @@
       'Posicionar o palete branco na área amarela (área de destino)',
       'Descarregar os produtos',
       'Strechar o palete de plástico',
+      'Transferir o palete para fora da área de manipulação'
     ],
   },
   {
     name: 'feirinha_alergenico_fs',
-    steps: 
+    steps: [
       'Posicionar na demarcação azul (área de chegada) de matéria prima',
       'Posicionar o palete laranja na área amarela (área de destino)',
       'Colocar uma camada de filme de cobertura sobre o palete plástico (vazio)',
       'Descarregar os produtos',
       'Strechar o palete de plástico',
+      'Transferir o palete para fora da área de manipulação'
     ],
   },
   {
@@ -27,6 +29,7 @@
       'Colocar uma camada de filme de cobertura sobre o palete plástico (vazio)',
       'Descarregar os produtos',
       'Streachar o palete de plástico',
+      'Transferir o palete para fora da área de manipulação'
     ],
   },
   {
@@ -40,6 +43,7 @@
       'Colocar uma camada de filme de cobertura sobre o palete plástico (vazio)',
       'Descarregar os produtos',
       'Streachar o palete de plástico',
+      'Transferir o palete para fora da área de manipulação'
     ],
   },
   {
@@ -49,6 +53,7 @@
       'Posicionar o palete branco na área amarela (área de destino)',
       'Descarregar os produtos',
       'Strechar o palete de plástico',
+      'Transferir o palete para fora da área de manipulação'
     ],
   },
   {
@@ -71,6 +76,7 @@
       'Colocar uma camada de filme de cobertura sobre o palete plástico (vazio)',
       'Descarregar os produtos',
       'Strechar o palete de plástico',
+      'Transferir o palete para fora da área de manipulação'
     ],
   },
   {
@@ -83,6 +89,7 @@
       'Colocar uma camada de filme de cobertura sobre o palete plástico (vazio)',
       'Descarregar os produtos',
       'Strechar o palete de plástico',
+      'Transferir o palete para fora da área de manipulação'
     ],
   },
   {
@@ -95,6 +102,7 @@
       'Descarregar os produtos',
       'Strechar no palete de plástico',
       'Colar cada uma das 4 barcodes em um lado distinto do palete',
+      'Transferir o palete para fora da área de manipulação'
     ],
   },
   {
@@ -104,6 +112,7 @@
       'Posicionar o palete branco na área amarelo (área de destino)',
       'Descarregar os produtos',
       'Strechar o palete de plástico',
+      'Transferir o palete para fora da área de manipulação'
     ],
   },
   {
@@ -113,6 +122,7 @@
       'Posicionar o palete laranja na área amarelo (área de destino)',
       'Descarregar os produtos',
       'Strechar o palete de plástico',
+      'Transferir o palete para fora da área de manipulação'
     ],
   },
   {
@@ -122,6 +132,7 @@
       'Posicionar o container de plástico na área amarelo (área de destino)',
       'Descarregar os produtos',
       'Recolar a UC, que originalmente veio no palete, no container',
+      'Transferir o palete para fora da área de manipulação'
     ],
   },
   {
@@ -131,6 +142,7 @@
       'Posicionar o palete branco na área amarelo (área de destino)',
       'Descarregar os produtos',
       'Strechar o palete de plástico',
+      'Transferir o palete para fora da área de manipulação'
     ],
   },
   {
@@ -140,6 +152,7 @@
       'Posicionar o palete branco na área amarela (área de destino)',
       'Descarregar os produtos',  
       'Strechar o palete de plástico',
+      'Transferir o palete para fora da área de manipulação'
     ],
   },
 ]
