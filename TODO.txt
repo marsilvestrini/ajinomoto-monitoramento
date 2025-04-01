@@ -16,23 +16,23 @@ reunião:
 8 ok -              validar redes 1(nok), 2(ok), 4(nok)
     8.1 -           rede 1 estag anotando pacote branco
     8.2 -           quase perfeito, anotar mais algumas imagens (ja fiz upload)
+9 * ok -            atualizar os tempos de contabilização de tempo usando o json (stretch e produtos ok)
+10 * ok -           eu acho que algumas logicas de contabilização de tempo de procedimento estão erradas
+* -                 forçar o foco da rede no ROI para todos os procedimentos
 
-* ok - atualizar os tempos de contabilização de tempo usando o json (stretch e produtos ok)
-* - eu acho que algumas logicas de contabilização de tempo de procedimento estão erradas
-* - forçar o foco da rede no ROI para todos os procedimentos 
-* - na detecção de classe do pallet, fazer pular quando classe for descoberta
-* - calibrar a detecção de cores do pallet de acordo com as gravações - adicionar também, o chão vazio como cor
+--- < falei na daily
 
-* - após a adição da classe pessoa na rede 1, arrumar o tracking e a emissão de alertas pra produtos sem etiqueta
-* - descarregamento de produto pula etapa mesmo não tendo todos os pacotes com etiqueta colada (acho que é o método de contabilização de tempo)
+* -                 na detecção de classe do pallet, fazer pular quando classe for descoberta
+* -                 calibrar a detecção de cores do pallet de acordo com as gravações - adicionar também, o chão vazio como cor
 
-* - fazer rede de identificação de etiqueta lateral (rede 6)
-* - fazer um tracker pra captura das etiquetas laterais
-
-* - adicionar os trackers e a etapa 7 ao gerenciamento do db 
-* - adicionar o restante dos procedimentos
-* - fazer o emit alerta ser um tópico da api main
-* - dockerizar
+* -                 após a adição da classe pessoa na rede 1, arrumar o tracking e a emissão de alertas pra produtos sem etiqueta
+* -                 descarregamento de produto pula etapa mesmo não tendo todos os pacotes com etiqueta colada (acho que é o método de contabilização de tempo)
+* -                 fazer rede de identificação de etiqueta lateral (rede 6)
+* -                 fazer um tracker pra captura das etiquetas laterais
+* -                 adicionar os trackers e a etapa 7 ao gerenciamento do db 
+* -                 adicionar o restante dos procedimentos
+* -                 fazer o emit alerta ser um tópico da api main
+* -                 dockerizar
 
 ? - quando manda a mensagem de cancelamento sem ter procedimento ativo quebra o sv (uma solução seria adicionar um verificador)
 ? - tirar o resize dos procedimentos

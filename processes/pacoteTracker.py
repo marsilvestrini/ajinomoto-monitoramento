@@ -143,6 +143,7 @@ class PacoteTracker:
             self.prev_centers = current_centers
 
             roi_detections = self.check_roi_detections(produto_boxes)
+
             if roi_detections:
                 self.last_detection_time = time.time()
             else:
@@ -151,7 +152,7 @@ class PacoteTracker:
                     json_to_send = {"Descarregar os produtos": self.statusPassoProduto}
                     self.messenger_passos.send_message(json_to_send)
                     self.isSpecting = False
-                    print("[Produto Tracker] Nenhuma detecção no ROI por 5 segundos. Parando a inspeção.")
+                    print(f"[Produto Tracker] Nenhuma detecção no ROI por {self.required_time} segundos. Parando a inspeção.")
 
             for idx, box in enumerate(produto_boxes):
                     x1, y1, x2, y2 = box
