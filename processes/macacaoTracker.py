@@ -85,10 +85,10 @@ class MacacaoTracker:
                     json_alert = {"alerta": True}
                     self.messenger_alertas.send_message(json_alert)
             
-            # Remover tempos antigos (> 20 segundos atrás)
+            # Remover tempos antigos (> x segundos atrás)
             self.detection_times = [t for t in self.detection_times if time.time() - t <= self.required_time]
             
-            # Verifica se a detecção foi contínua por 20 segundos
+            # Verifica se a detecção foi contínua por x segundos
             if len(self.detection_times) > 0 and (self.detection_times[-1] - self.detection_times[0]) >= (self.required_time - 1):
                 print("[Macacao Tracker] Macacao detectado. Encerrando inspeção.")
                 self.statusPassoMacacao = True

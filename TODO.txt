@@ -22,10 +22,16 @@ reunião:
 --- < falei na daily
 
 11 * ok -           na detecção de classe do pallet, fazer pular quando classe for descoberta
-12 -                forçar o foco da rede no ROI para os procedimentos
+12 -                forçar o foco da rede no ROI para os procedimentos finish, start, pallet in class
+    12.1 ok -       finishTracker 
+    12.2 -          palletTracker in class 
+    12.3 ok -       startTracker 
+
 13 1/2 -            calibrar a detecção de cores do pallet de acordo com as gravações - adicionar também o chão vazio como cor
     13.1 ok -       branco e vazio ok
     13.2 -          azul, laranja e amarelo nok
+
+14 -                validar rede 3
 
 * -                 após a adição da classe pessoa na rede 1, arrumar o tracking e a emissão de alertas pra produtos sem etiqueta
 * -                 descarregamento de produto pula etapa mesmo não tendo todos os pacotes com etiqueta colada (acho que é o método de contabilização de tempo)

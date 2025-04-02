@@ -6,14 +6,13 @@ from kafka_config.kafka_config import KafkaMessenger
 import json
 from dotenv import load_dotenv
 import os
-import torch  # Import torch to check for CUDA availability
+import torch
 
 load_dotenv()
 
 class StartTracker:
     def __init__(self, model_path):
         # Check if CUDA is available
-        # self.device = 'cpu'
         self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
         print(f"[StartTracker] Using device: {self.device}")
         
@@ -33,40 +32,55 @@ class StartTracker:
             self.dados = json.load(arquivo)
 
         self.required_time = self.dados['required_times'][0]['spectingStart']-1  # Segundos necessários sem detecção para confirmar remoção
+        
+        # Definir a ROI (x, y, width, height)
+        self.roi_x, self.roi_y, self.roi_width, self.roi_height = 375, 176, 175, 319
 
     def process_video(self, frame):
         try:
+            if self.timeout_start is None:
+                self.timeout_start = time.time()
+        
             frame = cv2.resize(frame, (640, 640))
             
             # Move the frame to the same device as the model (if using CUDA)
             if self.device == 'cuda':
-                frame_tensor = torch.from_numpy(frame).to(self.device).float() / 255.0  # Normalize and move to GPU
-                frame_tensor = frame_tensor.permute(2, 0, 1).unsqueeze(0)  # Change shape to (1, 3, H, W)
+                frame_tensor = torch.from_numpy(frame).to(self.device).float() / 255.0
+                frame_tensor = frame_tensor.permute(2, 0, 1).unsqueeze(0)
             else:
-                frame_tensor = frame  # Use the frame as-is for CPU
-
+                frame_tensor = frame
 
             # Perform inference
             results = self.model(frame_tensor, verbose=False)
             detected = False
-            frame_width = frame.shape[1]
-            right_region = 300  # Definir o lado direito (últimos 30% da largura do frame)
+            
+            # Definir os limites da ROI
+            roi_x1, roi_y1 = self.roi_x, self.roi_y
+            roi_x2, roi_y2 = roi_x1 + self.roi_width, roi_y1 + self.roi_height
 
+            # Filtrar apenas as detecções dentro da ROI
+            filtered_boxes = []
+            filtered_cls = []
+            filtered_scores = []
+            
             for result in results:
                 for box in result.boxes:
-                    cls = result.names[int(box.cls)]  # Obter a classe detectada
-                    x1, y1, x2, y2 = box.xyxy[0]  # Coordenadas do bounding box
+                    cls = int(box.cls)
+                    x1, y1, x2, y2 = box.xyxy[0].tolist()
+                    label = self.model.names[cls]
                     
-                    if x1 > right_region:
+                    # Verificar se o bounding box está dentro da ROI
+                    if (x1 >= roi_x1 and y1 >= roi_y1 and 
+                        x2 <= roi_x2 and y2 <= roi_y2 and label == 'pallet'):
                         detected = True
-                        break
-                if detected:
-                    break
+                        filtered_boxes.append([x1, y1, x2, y2])
+                        filtered_cls.append(cls)
+                        filtered_scores.append(float(box.conf))
             
+            # Atualizar o status de detecção
             if detected:
                 self.detection_times.append(time.time())
-                if self.timeout_start is None:
-                    self.timeout_start = time.time()  # Inicia o tempo limite
+
             else:
                 # Se não houver detecção, verifica se o tempo limite foi excedido
                 if self.timeout_start is not None and time.time() - self.timeout_start > self.dados['timeouts'][0]['spectingStart']-1:
@@ -76,15 +90,15 @@ class StartTracker:
                     self.alertPassoStart = 'Start não identificado'
                     self.messenger_passos.send_message(json_to_send)
                     self.isSpecting = False
-                    self.timeout_start = None  # Reseta o tempo limite
+                    self.timeout_start = None
 
                     json_alert = {"alerta": True}
                     self.messenger_alertas.send_message(json_alert)
             
-            # Remover tempos antigos (> 20 segundos atrás)
+            # Remover tempos antigos (> required_time segundos atrás)
             self.detection_times = [t for t in self.detection_times if time.time() - t <= self.required_time]
             
-            # Verifica se a detecção foi contínua por 20 segundos
+            # Verifica se a detecção foi contínua por required_time segundos
             if len(self.detection_times) > 0 and (self.detection_times[-1] - self.detection_times[0]) >= (self.required_time - 1):
                 print("[Start Tracker] Start detectado. Encerrando inspeção.")
                 self.statusPassoStart = True
@@ -92,10 +106,24 @@ class StartTracker:
                 self.messenger_passos.send_message(json_to_send)
                 self.isSpecting = False
             
-            # Desenha o frame processado
-            frame = results[0].plot()
-            # cv2.line(frame, (right_region, 0), (right_region, 640), (255, 255, 255), 2)
+            # Criar uma cópia do frame original para desenhar
+            output_frame = frame.copy()
+            
+            # Desenhar apenas as detecções dentro da ROI
+            for box, cls, score in zip(filtered_boxes, filtered_cls, filtered_scores):
+                x1, y1, x2, y2 = map(int, box)
+                color = (0, 255, 0)  # Verde para detecções dentro da ROI
+                cv2.rectangle(output_frame, (x1, y1), (x2, y2), color, 2)
+                
+                # Adicionar label e confiança
+                label = f"{results[0].names[cls]}: {score:.2f}"
+                cv2.putText(output_frame, label, (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
+            
+            # Desenhar a ROI para referência (vermelho)
+            cv2.rectangle(output_frame, (roi_x1, roi_y1), (roi_x2, roi_y2), (0, 0, 255), 2)
+            # cv2.putText(output_frame, "ROI", (roi_x1, roi_y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
 
-            return frame  # Retorna o frame processado
+            return output_frame
         except Exception as e:
             print(f'[StartTracker] Error processing frame: {e}')
+            return frame
