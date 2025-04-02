@@ -116,6 +116,9 @@ class PalletTracker:
 
             # Verifica a cor do pallet
             if self.spectingColor:
+                if self.start_time is None:
+                    self.start_time = time.time()  # Inicia a contagem de tempo
+
                 # Verifica o tempo limite 
                 if time.time() - self.timeout_start > self.dados['timeouts'][0]['spectingPalletColor']-1:
                     print("[Pallet Tracker] Tempo limite excedido para verificação de cor.")
@@ -128,36 +131,36 @@ class PalletTracker:
                     self.timeout_start = time.time()  # Reinicia o tempo limite para o próximo passo
                     json_alert = {"alerta": True}
                     self.messenger_alertas.send_message(json_alert)
+
                     if self.expected_pallet_class == "pallet_descoberto":
                         print(f"[Pallet Tracker] Classe de pallet esperada == descoberta, pulando etapa")
                         self.spectingPlastic = False
                         self.isSpecting = False ## if classe == descoberto jump step
-
                 else:
                     dominant_color = self.get_dominant_color(frame, self.roi)
                     if self.expected_color == dominant_color:
-                        if self.start_time is None:
-                            self.start_time = time.time()  # Inicia a contagem de tempo
-                        else:
-                            elapsed_time = time.time() - self.start_time
-                            if elapsed_time >= self.required_time_color: 
-                                print(f"[Pallet Tracker] Cor final definida: {dominant_color}")
-                                self.start_time = None
-                                self.spectingColor = False
-                                self.statusPassoCollor = True
-                                json_to_send = {f"Posicionar o palete {self.expected_color} na área amarela (área de destino)": self.statusPassoCollor}
-                                self.messenger_passos.send_message(json_to_send)
-                                self.spectingPlastic = True
-                                self.timeout_start = time.time()  # Reinicia o tempo limite para o próximo passo
-                                if self.expected_pallet_class == "pallet_descoberto":
-                                    print(f"[Pallet Tracker] Classe de pallet esperada == descoberta, pulando etapa")
-                                    self.spectingPlastic = False
-                                    self.isSpecting = False ## if classe == descoberto jump step
+                        elapsed_time = time.time() - self.start_time
+                        if elapsed_time >= self.required_time_color: 
+                            print(f"[Pallet Tracker] Cor final definida: {dominant_color}")
+                            self.start_time = None
+                            self.spectingColor = False
+                            self.statusPassoCollor = True
+                            json_to_send = {f"Posicionar o palete {self.expected_color} na área amarela (área de destino)": self.statusPassoCollor}
+                            self.messenger_passos.send_message(json_to_send)
+                            self.spectingPlastic = True
+                            self.timeout_start = time.time()  # Reinicia o tempo limite para o próximo passo
+                            if self.expected_pallet_class == "pallet_descoberto":
+                                print(f"[Pallet Tracker] Classe de pallet esperada == descoberta, pulando etapa")
+                                self.spectingPlastic = False
+                                self.isSpecting = False ## if classe == descoberto jump step
                     else:
                         self.start_time = None  # Reseta o tempo se a cor não for a esperada
             
             # Verifica a classe do pallet
             if self.spectingPlastic:
+                if self.start_time is None:
+                    self.start_time = time.time()  # Inicia a contagem de tempo
+
                 # Verifica o tempo limite de 60 segundos
                 if time.time() - self.timeout_start > self.dados['timeouts'][0]['spectingPalletClass']-1:
                     self.alertPassoClassePallet = 'Classe de Pallet esperada não encontrada'
@@ -179,20 +182,16 @@ class PalletTracker:
                             label = self.model.names[cls]
 
                             if label == self.expected_pallet_class:
-                                if self.start_time is None:
-                                    self.start_time = time.time()  # Inicia a contagem de tempo
-                                else:
-                                    elapsed_time = time.time() - self.start_time
-                                    if elapsed_time >= self.required_time_classe: 
-                                        print(f"[Pallet Tracker] Classe de pallet definida: {label}")
-                                        self.start_time = None
-                                        self.spectingPlastic = False
-                                        print("[Pallet Tracker] Encerrando inspeção de pallet")
-                                        self.statusPassoClassePallet = True
-                                        if self.expected_pallet_class == 'pallet_coberto':
-                                            json_to_send = {"Colocar uma camada de filme de cobertura sobre o palete plástico (vazio)": self.statusPassoClassePallet}
-                                            self.messenger_passos.send_message(json_to_send)
-                                        self.isSpecting = False
+                                elapsed_time = time.time() - self.start_time
+                                if elapsed_time >= self.required_time_classe: 
+                                    print(f"[Pallet Tracker] Classe de pallet definida: {label}")
+                                    self.start_time = None
+                                    self.spectingPlastic = False
+                                    print("[Pallet Tracker] Encerrando inspeção de pallet")
+                                    self.statusPassoClassePallet = True
+                                    json_to_send = {"Colocar uma camada de filme de cobertura sobre o palete plástico (vazio)": self.statusPassoClassePallet}
+                                    self.messenger_passos.send_message(json_to_send)
+                                    self.isSpecting = False
                             else:
                                 self.start_time = None  # Reseta o tempo se a classe não for a esperada
 
