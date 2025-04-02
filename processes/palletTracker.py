@@ -6,7 +6,7 @@ from kafka_config.kafka_config import KafkaMessenger
 import json
 from dotenv import load_dotenv
 import os
-import torch  # Import torch to check for CUDA availability
+import torch
 
 load_dotenv()
 
@@ -25,7 +25,7 @@ class PalletTracker:
         self.expected_pallet_class = expected_pallet_class
         self.isSpecting = True
         self.preSpect = True
-        self.spectingColor = False  # Inicialmente desativado
+        self.spectingColor = False
         self.statusPassoCollor = False
         self.spectingPlastic = False
         self.statusPassoClassePallet = False
@@ -37,9 +37,10 @@ class PalletTracker:
             "vazio": (146, 155, 153)
         }
         
-        self.roi = [215, 161, 120, 246]  # x, y, w, h
-        self.start_time = None  # Para contagem de tempo
-        self.timeout_start = None  # Para o tempo limite de 60 segundos
+        self.roi_color = [215, 161, 120, 246]  # ROI para verificação de cor
+        self.roi_plastic = [190, 170, 188, 319]  # ROI compartilhada para preSpect e plastic
+        self.start_time = None
+        self.timeout_start = None
 
         self.alertPassoCollor = ''
         self.alertPassoClassePallet = ''
@@ -47,9 +48,8 @@ class PalletTracker:
         with open(os.getenv('JSON_PATH'), 'r', encoding='utf-8') as arquivo:
             self.dados = json.load(arquivo)
         
-        self.required_time_classe = self.dados['required_times'][0]['spectingPalletClass']-1  # Segundos necessários sem detecção para confirmar remoção
-        self.required_time_color = self.dados['required_times'][0]['spectingPalletColor']-1  # Segundos necessários sem detecção para confirmar remoção
-
+        self.required_time_classe = self.dados['required_times'][0]['spectingPalletClass']-1
+        self.required_time_color = self.dados['required_times'][0]['spectingPalletColor']-1
 
     def closest_color(self, rgb):
         min_distance = float("inf")
@@ -70,56 +70,69 @@ class PalletTracker:
     def get_dominant_color(self, frame, roi):
         x, y, w, h = roi
         roi_frame = frame[y:y+h, x:x+w]
-
-        # Calcula a média dos valores de cor na ROI
         avg_color_per_row = np.mean(roi_frame, axis=0)
         avg_color = np.mean(avg_color_per_row, axis=0)
-
-        # Converte para inteiros e retorna como tupla
         return self.closest_color(tuple(int(c) for c in avg_color))
             
     def process_video(self, frame):
         try:
             frame = cv2.resize(frame, (640, 640))
             
-            # Move the frame to the same device as the model (if using CUDA)
             if self.device == 'cuda':
-                frame_tensor = torch.from_numpy(frame).to(self.device).float() / 255.0  # Normalize and move to GPU
-                frame_tensor = frame_tensor.permute(2, 0, 1).unsqueeze(0)  # Change shape to (1, 3, H, W)
+                frame_tensor = torch.from_numpy(frame).to(self.device).float() / 255.0
+                frame_tensor = frame_tensor.permute(2, 0, 1).unsqueeze(0)
             else:
-                frame_tensor = frame  # Use the frame as-is for CPU
+                frame_tensor = frame
 
-            # Primeiro, identifica qualquer objeto do modelo YOLO na imagem
+            output_frame = frame.copy()
+            roi_x1, roi_y1 = self.roi_plastic[0], self.roi_plastic[1]
+            roi_x2, roi_y2 = roi_x1 + self.roi_plastic[2], roi_y1 + self.roi_plastic[3]
+
+            # Primeiro, identifica qualquer objeto do modelo YOLO na ROI específica
             if self.preSpect:
                 results = self.model(frame_tensor, verbose=False)
-                frame = results[0].plot()
-
-                # Verifica se alguma classe foi detectada
+                detected_in_roi = False
+                
+                # Verifica apenas detecções dentro da ROI
                 for result in results:
                     for box in result.boxes:
                         cls = int(box.cls[0].item())
-                        label = self.model.names[cls]
+                        x1, y1, x2, y2 = box.xyxy[0].tolist()
+                        
+                        if (x1 >= roi_x1 and y1 >= roi_y1 and 
+                            x2 <= roi_x2 and y2 <= roi_y2):
+                            label = self.model.names[cls]
+                            if "pallet" in label:
+                                detected_in_roi = True
+                                # Desenha apenas detecções dentro da ROI
+                                color = (0, 255, 0)  # Verde
+                                cv2.rectangle(output_frame, (int(x1), int(y1)), (int(x2), int(y2)), color, 2)
+                                cv2.putText(output_frame, label, (int(x1), int(y1)-10), 
+                                            cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
 
-                        if "pallet" in label:
-                            if self.start_time is None:
-                                self.start_time = time.time()  # Inicia a contagem de tempo
-                            else:
-                                elapsed_time = time.time() - self.start_time
-                                if elapsed_time >= 0.1:  # 2 segundos
-                                    # print(f"[Pallet Tracker] Pallet detectado, iniciando inspeção.")
-                                    self.start_time = None
-                                    self.spectingColor = True  # Agora inicia a verificação de cor
-                                    self.preSpect = False
-                                    self.timeout_start = time.time()  # Inicia o tempo limite
-                        else:
-                            self.start_time = None  # Reseta o tempo se a classe não for a esperada
+                if detected_in_roi:
+                    if self.start_time is None:
+                        self.start_time = time.time()
+                    else:
+                        elapsed_time = time.time() - self.start_time
+                        if elapsed_time >= 0.1:
+                            self.start_time = None
+                            self.spectingColor = True
+                            self.preSpect = False
+                            self.timeout_start = time.time()
+                else:
+                    self.start_time = None
 
-            # Verifica a cor do pallet
+                # Desenha a ROI para visualização
+                cv2.rectangle(output_frame, (roi_x1, roi_y1), (roi_x2, roi_y2), (0, 0, 255), 2)
+                cv2.putText(output_frame, "ROI Pre-Spect", (roi_x1, roi_y1-10), 
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
+
+            # Verifica a cor do pallet (usa ROI normal)
             if self.spectingColor:
                 if self.start_time is None:
-                    self.start_time = time.time()  # Inicia a contagem de tempo
+                    self.start_time = time.time()
 
-                # Verifica o tempo limite 
                 if time.time() - self.timeout_start > self.dados['timeouts'][0]['spectingPalletColor']-1:
                     print("[Pallet Tracker] Tempo limite excedido para verificação de cor.")
                     self.alertPassoCollor = 'Cor esperada de pallet não identificada'
@@ -128,16 +141,16 @@ class PalletTracker:
                     self.messenger_passos.send_message(json_to_send)
                     self.spectingColor = False
                     self.spectingPlastic = True
-                    self.timeout_start = time.time()  # Reinicia o tempo limite para o próximo passo
+                    self.timeout_start = time.time()
                     json_alert = {"alerta": True}
                     self.messenger_alertas.send_message(json_alert)
 
                     if self.expected_pallet_class == "pallet_descoberto":
                         print(f"[Pallet Tracker] Classe de pallet esperada == descoberta, pulando etapa")
                         self.spectingPlastic = False
-                        self.isSpecting = False ## if classe == descoberto jump step
+                        self.isSpecting = False
                 else:
-                    dominant_color = self.get_dominant_color(frame, self.roi)
+                    dominant_color = self.get_dominant_color(frame, self.roi_color)
                     if self.expected_color == dominant_color:
                         elapsed_time = time.time() - self.start_time
                         if elapsed_time >= self.required_time_color: 
@@ -148,20 +161,19 @@ class PalletTracker:
                             json_to_send = {f"Posicionar o palete {self.expected_color} na área amarela (área de destino)": self.statusPassoCollor}
                             self.messenger_passos.send_message(json_to_send)
                             self.spectingPlastic = True
-                            self.timeout_start = time.time()  # Reinicia o tempo limite para o próximo passo
+                            self.timeout_start = time.time()
                             if self.expected_pallet_class == "pallet_descoberto":
                                 print(f"[Pallet Tracker] Classe de pallet esperada == descoberta, pulando etapa")
                                 self.spectingPlastic = False
-                                self.isSpecting = False ## if classe == descoberto jump step
+                                self.isSpecting = False
                     else:
-                        self.start_time = None  # Reseta o tempo se a cor não for a esperada
+                        self.start_time = None
             
-            # Verifica a classe do pallet
+            # Verifica a classe do pallet (usa mesma ROI do preSpect)
             if self.spectingPlastic:
                 if self.start_time is None:
-                    self.start_time = time.time()  # Inicia a contagem de tempo
+                    self.start_time = time.time()
 
-                # Verifica o tempo limite de 60 segundos
                 if time.time() - self.timeout_start > self.dados['timeouts'][0]['spectingPalletClass']-1:
                     self.alertPassoClassePallet = 'Classe de Pallet esperada não encontrada'
                     print("[Pallet Tracker] Tempo limite excedido para verificação de classe.")
@@ -174,31 +186,50 @@ class PalletTracker:
                     self.messenger_alertas.send_message(json_alert)
                 else:
                     results = self.model(frame_tensor, verbose=False)
-                    frame = results[0].plot()
+                    detected_in_roi = False
 
+                    # Filtra apenas detecções dentro da ROI
                     for result in results:
                         for box in result.boxes:
                             cls = int(box.cls[0].item())
-                            label = self.model.names[cls]
+                            x1, y1, x2, y2 = box.xyxy[0].tolist()
+                            
+                            if (x1 >= roi_x1 and y1 >= roi_y1 and 
+                                x2 <= roi_x2 and y2 <= roi_y2):
+                                label = self.model.names[cls]
+                                if label == self.expected_pallet_class:
+                                    detected_in_roi = True
+                                    # Desenha apenas detecções dentro da ROI
+                                    color = (0, 255, 0)  # Verde
+                                    cv2.rectangle(output_frame, (int(x1), int(y1)), (int(x2), int(y2)), color, 2)
+                                    cv2.putText(output_frame, label, (int(x1), int(y1)-10), 
+                                                cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
 
-                            if label == self.expected_pallet_class:
-                                elapsed_time = time.time() - self.start_time
-                                if elapsed_time >= self.required_time_classe: 
-                                    print(f"[Pallet Tracker] Classe de pallet definida: {label}")
-                                    self.start_time = None
-                                    self.spectingPlastic = False
-                                    print("[Pallet Tracker] Encerrando inspeção de pallet")
-                                    self.statusPassoClassePallet = True
-                                    json_to_send = {"Colocar uma camada de filme de cobertura sobre o palete plástico (vazio)": self.statusPassoClassePallet}
-                                    self.messenger_passos.send_message(json_to_send)
-                                    self.isSpecting = False
-                            else:
-                                self.start_time = None  # Reseta o tempo se a classe não for a esperada
+                    if detected_in_roi:
+                        elapsed_time = time.time() - self.start_time
+                        if elapsed_time >= self.required_time_classe: 
+                            print(f"[Pallet Tracker] Classe de pallet definida: {self.expected_pallet_class}")
+                            self.start_time = None
+                            self.spectingPlastic = False
+                            print("[Pallet Tracker] Encerrando inspeção de pallet")
+                            self.statusPassoClassePallet = True
+                            json_to_send = {"Colocar uma camada de filme de cobertura sobre o palete plástico (vazio)": self.statusPassoClassePallet}
+                            self.messenger_passos.send_message(json_to_send)
+                            self.isSpecting = False
+                    else:
+                        self.start_time = None
 
-            # Desenha a ROI no frame
-            x, y, w, h = self.roi
-            cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)  # Verde
+                # Desenha a ROI para visualização
+                cv2.rectangle(output_frame, (roi_x1, roi_y1), (roi_x2, roi_y2), (0, 0, 255), 2)
+                cv2.putText(output_frame, "ROI Plastic", (roi_x1, roi_y1-10), 
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
 
-            return frame  # Retorna o frame processado  
+            # Desenha a ROI de cor (verde)
+            x, y, w, h = self.roi_color
+            cv2.rectangle(output_frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
+
+            return output_frame
+            
         except Exception as e:
             print(f'[PalletTracker] Error processing frame: {e}')
+            return frame
