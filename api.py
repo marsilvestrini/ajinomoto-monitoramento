@@ -368,7 +368,7 @@ def read_qr_code():
 # Exemplo de uso
 if __name__ == "__main__":
     # Cria uma instância de InspectProcedure
-    inspect_procedure = InspectProcedure()
+    # inspect_procedure = InspectProcedure()
 
     # Inicia o Flask em um thread separado
     flask_thread = Thread(target=run_flask)
