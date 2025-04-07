@@ -39,7 +39,7 @@ reunião:
 
 
 * -                 adicionar o restante dos procedimentos
-* -                 fazer o emit alerta ser um tópico da api main
+* ok -                 fazer o emit alerta ser um tópico da api main
 * -                 dockerizar
 
 ** - rede de pallet identifica pallet branco como vazio
