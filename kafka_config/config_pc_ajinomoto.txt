@@ -1,0 +1,5 @@
+zookeeper:
+.\bin\windows\zookeeper-server-start.bat .\config\zookeeper.properties
+
+kafka:
+java -Dlog4j.configuration=file:config/log4j.properties -cp "libs/*" kafka.Kafka config/server.properties
