@@ -11,3 +11,4 @@ torch
 torchvision
 ultralytics==8.3.66
 pyserial
+modbus_tk
