@@ -16,7 +16,7 @@ class ProcedimentoManager:
         )
         self.cursor = self.conn.cursor()
 
-    def adicionar_procedimento(self, timestamp_inicio, timestamp_fim, etiqueta, quantidade_etiquetas, alertas, etapa_1, etapa_2, etapa_3, etapa_4, etapa_5, etapa_6, observacoes, id_procedimento):
+    def adicionar_procedimento(self, timestamp_inicio, timestamp_fim, etiqueta, quantidade_etiquetas, alertas, etapa_1, etapa_2, etapa_3, etapa_4, etapa_5, etapa_6,etapa_7, observacoes, id_procedimento):
         """
         Adiciona um novo procedimento à tabela.
         """
@@ -24,14 +24,14 @@ class ProcedimentoManager:
             query = sql.SQL("""
                 INSERT INTO procedimentos (
                     timestamp_inicio, timestamp_fim, etiqueta, quantidade_etiquetas,
-                    alertas, etapa_1, etapa_2, etapa_3, etapa_4, etapa_5, etapa_6, observacoes, id_procedimento
+                    alertas, etapa_1, etapa_2, etapa_3, etapa_4, etapa_5, etapa_6, etapa_7, observacoes, id_procedimento
                 )
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             """)
             self.cursor.execute(query, (
                 timestamp_inicio, timestamp_fim, etiqueta, quantidade_etiquetas,
                 extras.Json(alertas),  # Converta o dicionário para JSONB
-                etapa_1, etapa_2, etapa_3, etapa_4, etapa_5, etapa_6, observacoes, id_procedimento
+                etapa_1, etapa_2, etapa_3, etapa_4, etapa_5, etapa_6, etapa_7, observacoes, id_procedimento
             ))
             self.conn.commit()
             print("[PG Config] Procedimento registrado no db com sucesso!")

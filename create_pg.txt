@@ -4,7 +4,7 @@ CREATE TABLE procedimentos (
     timestamp_fim TIMESTAMP NOT NULL,
     duracao INTERVAL GENERATED ALWAYS AS (timestamp_fim - timestamp_inicio) STORED,
     etiqueta VARCHAR(255) NOT NULL,
-    quantidade_etiquetas INT NOT NULL, -- Nova coluna para o número de etiquetas lidas
+    quantidade_etiquetas INT NOT NULL,
     alertas JSONB,
     etapa_1 BOOLEAN,
     etapa_2 BOOLEAN,
@@ -29,8 +29,6 @@ CREATE TABLE procedimentos (
         END
     ) STORED,
     observacoes TEXT,
-    id_procedimento VARCHAR(255) NOT NULL, -- Nova coluna adicionada
+    id_procedimento VARCHAR(255) NOT NULL,
     CONSTRAINT valid_timestamps CHECK (timestamp_fim >= timestamp_inicio)
 );
-
-COMMIT;

@@ -87,31 +87,42 @@
       "ordem": "[self.startTracker, self.macacaoTracker, self.palletTracker, self.pacoteTracker, self.stretchTracker, self.finishTracker]",
       "db_command_etapas": "[self.startTracker.statusPassoStart, self.macacaoTracker.statusPassoMacacao, self.palletTracker.statusPassoCollor, self.palletTracker.statusPassoClassePallet, self.pacoteTracker.statusPassoProduto, self.stretchTracker.statusPassoStretch, self.finishTracker.statusPassoFinish]",
       "db_command_alertas": "self.startTracker.alertPassoStart + self.macacaoTracker.alertPassoMacacao + self.palletTracker.alertPassoCollor + self.palletTracker.alertPassoClassePallet + self.pacoteTracker.alertPassoProduto + self.stretchTracker.alertPassoStretch + self.finishTracker.alertPassoFinish"
+    },
+    {
+    "nome": "teste",
+      "info": [
+        {"expected_macacao_color": "macacao_azul"},
+        {"expected_pallet_color": "amarelo"},
+        {"expected_pallet_class": "pallet_coberto"}
+      ],
+      "ordem": "[self.finishTracker]",
+      "db_command_etapas": "[self.startTracker.statusPassoStart, self.macacaoTracker.statusPassoMacacao, self.palletTracker.statusPassoCollor, self.palletTracker.statusPassoClassePallet, self.pacoteTracker.statusPassoProduto, self.stretchTracker.statusPassoStretch, self.finishTracker.statusPassoFinish]",
+      "db_command_alertas": "self.startTracker.alertPassoStart + self.macacaoTracker.alertPassoMacacao + self.palletTracker.alertPassoCollor + self.palletTracker.alertPassoClassePallet + self.pacoteTracker.alertPassoProduto + self.stretchTracker.alertPassoStretch + self.finishTracker.alertPassoFinish"
     }
   ],
 
   "timeouts": [
     {
-      "spectingStart": 60,
-      "spectingMacacao": 60,
-      "spectingPalletColor": 60,
-      "spectingPalletClass": 60,
-      "spectingStrech": 60,
-      "spectingPacotes": 120,
-      "spectingFinish" : 60
+      "spectingStart": 240,
+      "spectingMacacao": 240,
+      "spectingPalletColor": 240,
+      "spectingPalletClass": 240,
+      "spectingStrech": 240,
+      "spectingPacotes": 240,
+      "spectingFinish" : 240
 
     }
   ],
 
   "required_times": [
     {
-      "spectingStrech": 16,
-      "spectingPacotes": 16,
-      "spectingStart": 16,
-      "spectingFinish": 16,
-      "spectingMacacao": 16,
-      "spectingPalletColor": 16,
-      "spectingPalletClass": 16
+      "spectingStrech": 10,
+      "spectingPacotes": 10,
+      "spectingStart": 10,
+      "spectingFinish": 10,
+      "spectingMacacao": 10,
+      "spectingPalletColor": 3,
+      "spectingPalletClass": 10
       
     }
   ]

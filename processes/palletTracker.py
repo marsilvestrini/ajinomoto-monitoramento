@@ -24,20 +24,21 @@ class PalletTracker:
         self.expected_color = expected_color
         self.expected_pallet_class = expected_pallet_class
         self.isSpecting = True
-        self.preSpect = True
-        self.spectingColor = False
+        self.preSpect = False
+        self.spectingColor = True
         self.statusPassoCollor = False
         self.spectingPlastic = False
         self.statusPassoClassePallet = False
         self.PREDEFINED_COLORS = {
-            "laranja": (0, 165, 255),
-            "amarelo": (0, 255, 255),
+            "laranja": (50, 90, 210),
+            "amarelo": (10, 200, 220),
             "azul": (255, 0, 0),
             "branco": (200, 205, 200),
             "vazio": (146, 155, 153)
         }
         
-        self.roi_color = [215, 161, 120, 246]  # ROI para verificação de cor
+        # self.roi_color = [215, 161, 120, 246]  # ROI para verificação de cor
+        self.roi_color = [225, 205, 120, 246]  # x, y, w, h
         self.roi_plastic = [190, 170, 188, 319]  # ROI compartilhada para preSpect e plastic
         self.start_time = None
         self.timeout_start = None
@@ -75,7 +76,10 @@ class PalletTracker:
         return self.closest_color(tuple(int(c) for c in avg_color))
             
     def process_video(self, frame):
-        try:
+        try: 
+            if self.timeout_start is None:
+                self.timeout_start = time.time()
+
             frame = cv2.resize(frame, (640, 640))
             
             if self.device == 'cuda':
@@ -98,10 +102,11 @@ class PalletTracker:
                     for box in result.boxes:
                         cls = int(box.cls[0].item())
                         x1, y1, x2, y2 = box.xyxy[0].tolist()
-                        
+                        print(1)
                         if (x1 >= roi_x1 and y1 >= roi_y1 and 
                             x2 <= roi_x2 and y2 <= roi_y2):
                             label = self.model.names[cls]
+                            print(label)
                             if "pallet" in label:
                                 detected_in_roi = True
                                 # Desenha apenas detecções dentro da ROI
@@ -111,17 +116,9 @@ class PalletTracker:
                                             cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
 
                 if detected_in_roi:
-                    if self.start_time is None:
-                        self.start_time = time.time()
-                    else:
-                        elapsed_time = time.time() - self.start_time
-                        if elapsed_time >= 0.1:
-                            self.start_time = None
-                            self.spectingColor = True
-                            self.preSpect = False
-                            self.timeout_start = time.time()
-                else:
-                    self.start_time = None
+                    self.spectingColor = True
+                    self.preSpect = False
+                    self.timeout_start = time.time()
 
                 # Desenha a ROI para visualização
                 cv2.rectangle(output_frame, (roi_x1, roi_y1), (roi_x2, roi_y2), (0, 0, 255), 2)
@@ -168,6 +165,14 @@ class PalletTracker:
                                 self.isSpecting = False
                     else:
                         self.start_time = None
+                        
+                cv2.putText(output_frame, f"cor identificada: {dominant_color}", (15, 15), 
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
+                # Desenha a ROI de cor (verde)
+                x, y, w, h = self.roi_color
+                cv2.rectangle(output_frame, (x, y), (x + w, y + h), (0, 0, 255), 2)
+                cv2.putText(output_frame, "ROI Collor", (x, y-10), 
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
             
             # Verifica a classe do pallet (usa mesma ROI do preSpect)
             if self.spectingPlastic:
@@ -223,10 +228,6 @@ class PalletTracker:
                 cv2.rectangle(output_frame, (roi_x1, roi_y1), (roi_x2, roi_y2), (0, 0, 255), 2)
                 cv2.putText(output_frame, "ROI Plastic", (roi_x1, roi_y1-10), 
                             cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
-
-            # Desenha a ROI de cor (verde)
-            x, y, w, h = self.roi_color
-            cv2.rectangle(output_frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
 
             return output_frame
             

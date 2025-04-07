@@ -123,6 +123,8 @@ class InspectProcedure:
         if tracker_name == "StartTracker":
             self.video_path = os.getenv('VIDEO_PATH_START')
         elif tracker_name == "MacacaoTracker":
+            if self.expected_macacao_color == "macacao_branco":
+                return
             self.video_path = os.getenv('VIDEO_PATH_MACACAO')
         elif tracker_name == "PalletTracker":
             self.video_path = os.getenv('VIDEO_PATH_PALLET')
@@ -130,6 +132,8 @@ class InspectProcedure:
             self.video_path = os.getenv('VIDEO_PATH_PACOTE')
         elif tracker_name == "StretchTracker":
             self.video_path = os.getenv('VIDEO_PATH_STRETCH')
+        elif tracker_name =='FinishTracker':
+            self.video_path = os.getenv('VIDEO_PATH_FINISH')
         else:
             self.video_path = os.getenv('VIDEO_PATH_DEFAULT')
 
@@ -153,7 +157,9 @@ class InspectProcedure:
             if self.tracker_index < len(self.tracker_order):
                 self.current_tracker = self.tracker_order[self.tracker_index]
                 print(f"[InspectProcedure] iniciando: {self.current_tracker}")
+                # self.update_video_path()  
             else:
+                # self.video_capture.stop_capture()
                 print("[InspectProcedure] Todos os trackers finalizados.")
                 self.timestamp_fim = datetime.now()  # Captura o timestamp de fim
                 self.save_on_db()
@@ -252,6 +258,7 @@ class InspectProcedure:
             "etapa_4": db_command_etapas[3],
             "etapa_5": db_command_etapas[4],
             "etapa_6": db_command_etapas[5],
+            "etapa_7": db_command_etapas[6],
             "observacoes": f"{self.obs}",
             "id_procedimento": f"{self.current_procedure}"
         }
@@ -367,10 +374,10 @@ if __name__ == "__main__":
     flask_thread.daemon = True  # Define o thread como daemon para encerrar quando o programa principal terminar
     flask_thread.start()
 
-    # Inicia a leitura de QR Code em um thread separado
-    qr_thread = Thread(target=read_qr_code)
-    qr_thread.daemon = True  # Define o thread como daemon para encerrar quando o programa principal terminar
-    qr_thread.start()
+    # # Inicia a leitura de QR Code em um thread separado
+    # qr_thread = Thread(target=read_qr_code)
+    # qr_thread.daemon = True  # Define o thread como daemon para encerrar quando o programa principal terminar
+    # qr_thread.start()
 
     # Inicia o Kafka em um thread separado para o tópico 'cancelar'
     kafka_cancel_thread = Thread(target=run_kafka_cancel)

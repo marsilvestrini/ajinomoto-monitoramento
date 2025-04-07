@@ -2,7 +2,7 @@ from kafka_config import KafkaMessenger
 
 messenger = KafkaMessenger(topic='procedimento')
 
-json_to_send = {"procedimento": "feirinha_alergenico_fs"}
+json_to_send = {"procedimento": "feirinha"}
 messenger.send_message(json_to_send)
 
 

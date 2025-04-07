@@ -28,7 +28,8 @@ class PacoteTracker:
         self.start_time = None
         self.pacotes_contados = 0
         self.last_count_time = time.time()  # Tempo da última contagem
-        self.roi = (393, 202, 126, 200)  # ROI: (x, y, width, height)
+        # self.roi = (393, 202, 126, 200)  # ROI: (x, y, width, height)
+        self.roi = (375, 176, 175, 319)  # ROI: (x, y, width, height)
         self.y_line_position = 360
         self.statusPassoProduto = False
         self.alertPassoProduto = ''
@@ -50,33 +51,6 @@ class PacoteTracker:
     def get_center(self, box):
         x1, y1, x2, y2 = box
         return (x1 + x2) // 2, (y1 + y2) // 2
-
-    def track_transition(self, current_centers):
-        # Lista para armazenar os índices dos pacotes que já foram contados
-        pacotes_ja_contados = []
-
-        # Ordenar os centroides pelo valor de x (menor x primeiro)
-        self.prev_centers.sort(key=lambda center: center[0])
-        current_centers.sort(key=lambda center: center[0])
-
-        if len(self.prev_centers) == len(current_centers):
-            # Garantir que as listas tenham o mesmo tamanho
-            min_length = min(len(self.prev_centers), len(current_centers))
-            for i in range(min_length):
-                prev_center_x, prev_center_y = self.prev_centers[i]
-                curr_center_x, curr_center_y = current_centers[i]
-
-                if prev_center_x > self.y_line_position and curr_center_x < self.y_line_position:
-
-                    # Verificar se o pacote já foi contado
-                    if i not in pacotes_ja_contados:
-                        # Verificar se já passou tempo suficiente desde a última contagem
-                        if time.time() - self.last_count_time > 1:  # Intervalo de 1 segundo
-                            self.pacotes_contados += 1
-                            self.last_count_time = time.time()
-                            pacotes_ja_contados.append(i)  # Marcar o pacote como contado
-                            # print("Pacote passou para o lado direito.")
-                            # print("Pacotes contados:", self.pacotes_contados)
 
     def check_etiqueta_inside_pacote(self, pacote_box, etiqueta_boxes):
         x1_p, y1_p, x2_p, y2_p = pacote_box
@@ -103,8 +77,8 @@ class PacoteTracker:
                 json_to_send = {"Descarregar os produtos": self.statusPassoProduto}
                 self.messenger_passos.send_message(json_to_send)
                 self.isSpecting = False
-                self.alertPassoProduto = "Timeover excedido para descarregamento de produtos."
-                print("[Produto Tracker] Timeover excedido para descarregamento de produtos.") 
+                self.alertPassoProduto = "Timeout excedido para descarregamento de produtos."
+                print("[Produto Tracker] Timeout excedido para descarregamento de produtos.") 
 
                 json_alert = {"alerta": True}
                 self.messenger_alertas.send_message(json_alert)               
@@ -135,12 +109,6 @@ class PacoteTracker:
                         produto_boxes.append((x1, y1, x2, y2))
                     elif label == "etiqueta":
                         etiqueta_boxes.append((x1, y1, x2, y2))
-        
-            current_centers = [self.get_center(box) for box in produto_boxes]
-
-            self.track_transition(current_centers)
-
-            self.prev_centers = current_centers
 
             roi_detections = self.check_roi_detections(produto_boxes)
 
@@ -168,7 +136,10 @@ class PacoteTracker:
 
             # Desenha o ROI no frame
             roi_x, roi_y, roi_w, roi_h = self.roi
-            cv2.rectangle(frame, (roi_x, roi_y), (roi_x + roi_w, roi_y + roi_h), (0, 255, 255), 2)  # Amarelo
+            cv2.rectangle(frame, (roi_x, roi_y), (roi_x + roi_w, roi_y + roi_h), (0, 0, 255), 2)  # Amarelo
+            cv2.putText(frame, "ROI Carga", (roi_x, roi_y-10), 
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
+            
             cv2.line(frame, (self.y_line_position, 0), (self.y_line_position, 640), (255, 255, 255), 2)
             # cv2.putText(frame, f"Pacotes contados: {self.pacotes_contados}", (15, 15), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 255), 2)
 

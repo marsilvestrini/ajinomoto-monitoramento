@@ -22,7 +22,7 @@ class FinishTracker:
         self.messenger_passos = KafkaMessenger(topic='passos')
         self.messenger_alertas = KafkaMessenger(topic='alertas')
 
-        self.isTracking = False
+        self.isSpecting = True
         self.detection_times = []  # Lista para armazenar os tempos de não detecção
         self.statusPassoFinish = False
         self.alertPassoFinish = ''
@@ -95,10 +95,10 @@ class FinishTracker:
                     time.time() - self.timeout_start > self.dados['timeouts'][0]['spectingFinish']-1):
                     print("[Finish Tracker] Tempo limite excedido para detecção inicial do objeto.")
                     self.statusPassoFinish = False
-                    json_to_send = {"Remover da demarcação azul (área de chegada) de matéria prima": self.statusPassoFinish}
+                    json_to_send = {"Transferir o palete para fora da área de manipulação": self.statusPassoFinish}
                     self.alertPassoFinish = 'Objeto não foi detectado inicialmente'
                     self.messenger_passos.send_message(json_to_send)
-                    self.isTracking = False
+                    self.isSpecting = False
                     self.timeout_start = None
                     
                     json_alert = {"alerta": True}
@@ -110,11 +110,11 @@ class FinishTracker:
             # Verificar se o objeto ficou ausente por required_time segundos
             if (self.initial_detection_made and len(self.detection_times) > 0 and 
                 (self.detection_times[-1] - self.detection_times[0]) >= (self.required_time - 1)):
-                print("[Finish Tracker] Objeto removido da área de chegada. Processo concluído.")
+                print("[Finish Tracker] Objeto removido da área de manipulação. Processo concluído.")
                 self.statusPassoFinish = True
-                json_to_send = {"Remover da demarcação azul (área de chegada) de matéria prima": self.statusPassoFinish}
+                json_to_send = {"Transferir o palete para fora da área de manipulação": self.statusPassoFinish}
                 self.messenger_passos.send_message(json_to_send)
-                self.isTracking = False
+                self.isSpecting = False
                 self.initial_detection_made = False
             
             # Desenhar apenas as detecções dentro da ROI
@@ -129,6 +129,8 @@ class FinishTracker:
             
             # Desenhar a ROI para referência
             cv2.rectangle(frame, (roi_x1, roi_y1), (roi_x2, roi_y2), (0, 0, 255), 2)
+            cv2.putText(frame, "ROI Descarga", (roi_x1, roi_y1-10), 
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
             # cv2.putText(frame, "ROI", (roi_x1, roi_y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
             
             return frame

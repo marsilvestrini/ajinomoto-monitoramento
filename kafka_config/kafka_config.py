@@ -44,7 +44,7 @@ class KafkaListener:
                 # Retorna a mensagem para ser processada
                 yield data
 
-            self.commit()
+            # self.commit()
 
         except Exception as e:
             print(f"[KafkaListener] Erro ao processar mensagem: {e}")

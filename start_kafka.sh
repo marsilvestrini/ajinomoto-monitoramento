@@ -1,6 +1,6 @@
 #!/bin/bash
 
-KAFKA_DIR="//opt/kafka"  # Caminho absoluto para o Kafka
+KAFKA_DIR="//opt/kafka_server"  # Caminho absoluto para o Kafka
 ZOOKEEPER_CONFIG="$KAFKA_DIR/config/zookeeper.properties"
 KAFKA_CONFIG="$KAFKA_DIR/config/server.properties"
 
