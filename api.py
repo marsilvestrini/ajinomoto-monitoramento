@@ -9,6 +9,7 @@ from processes.startTracker import StartTracker
 from processes.macacaoTracker import MacacaoTracker
 from processes.finishTracker import FinishTracker
 from pg_config.pg_config import ProcedimentoManager
+from handlers.handlers import CancelHandler, EtiquetaHandler
 from datetime import datetime
 from video_config.video_capture import VideoCapture
 from dotenv import load_dotenv
@@ -33,41 +34,6 @@ app.config['CORS_HEADERS'] = 'Content-Type'
 # Buffer para armazenar os frames processados
 frame_buffer = Queue(maxsize=1000)  # Ajuste o tamanho do buffer conforme necessário
 frame_lock = Lock()  # Lock para garantir acesso seguro ao buffer
-
-class CancelHandler:
-    isCanceled = False
-
-    @classmethod
-    def get_isCanceled_value(cls):
-        return cls.isCanceled
-    
-    @classmethod
-    def set_isCanceled_value(cls, new_isCanceled_value):
-        cls.isCanceled = new_isCanceled_value
-
-class EtiquetaHandler:
-    quantidade_etiqueta = 0
-    valor_etiqueta = None
-    
-    @classmethod
-    def set_valor_etiqueta(cls, new_valor_etiqueta):
-        cls.valor_etiqueta = new_valor_etiqueta
-    
-    @classmethod
-    def set_quantidade_etiqueta(cls, new_quantidade_etiqueta):
-        cls.quantidade_etiqueta += new_quantidade_etiqueta
-    
-    @classmethod
-    def get_valor_etiqueta(cls):
-        return cls.valor_etiqueta
-    
-    @classmethod
-    def get_quantidade_etiqueta(cls):
-        return cls.quantidade_etiqueta
-    
-    @classmethod
-    def set_quantidade_etiqueta_zero(cls):
-        cls.quantidade_etiqueta = 0
 
 
 class InspectProcedure:
