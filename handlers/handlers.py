@@ -1,3 +1,4 @@
+import modbus_tk.modbus_tcp as modbus_tk  # Import Modbus TCP library
 
 class CancelHandler:
     isCanceled = False
@@ -33,3 +34,26 @@ class EtiquetaHandler:
     @classmethod
     def set_quantidade_etiqueta_zero(cls):
         cls.quantidade_etiqueta = 0
+
+class AlertaHander:
+    def __init__(self):
+        self.alert_state = False
+        # Initialize Modbus TCP client
+        self.modbus_client = modbus_tk.TcpMaster(host='192.168.1.100', port=502)
+        self.modbus_client.set_timeout(5.0)  # Set a timeout for Modbus communication
+
+    def process_alert(self, alert_value):
+        self.alert_state = alert_value
+
+        if self.alert_state:
+            print(f"[AlertHander] Alert State: {self.alert_state}")
+            try:
+                # Write to Modbus coil (address 0, value 1)
+                self.modbus_client.execute(
+                    self.modbus_client.write_single_coil(0, 1)
+                )
+                print(f"[AlertHander] Coil at address {0} set to 1.")
+            except Exception as e:
+                print(f"[AlertHander] Error writing to Modbus coil: {e}")
+            finally:
+                self.alert_state = False  # Reset alert state

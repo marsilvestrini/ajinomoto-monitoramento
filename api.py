@@ -9,7 +9,7 @@ from processes.startTracker import StartTracker
 from processes.macacaoTracker import MacacaoTracker
 from processes.finishTracker import FinishTracker
 from pg_config.pg_config import ProcedimentoManager
-from handlers.handlers import CancelHandler, EtiquetaHandler
+from handlers.handlers import CancelHandler, EtiquetaHandler, AlertaHander
 from datetime import datetime
 from video_config.video_capture import VideoCapture
 from dotenv import load_dotenv
@@ -307,6 +307,29 @@ def run_kafka_cancel():
             kafka_cancel_listener.close()
             CancelHandler.set_isCanceled_value(True)  # Sinaliza o cancelamento
 
+
+def run_kafka_alert():
+    """
+    Função para rodar o Kafka em um thread separado.
+    """
+    # Cria uma instancia da classe que gerencia o alerta
+    alerta_hander = AlertaHander()
+    # Cria uma instância do KafkaListener
+    kafka_listener = KafkaListener(topic='alertas')
+
+    # Escuta mensagens do Kafka
+    for message in kafka_listener.listen():
+        if isinstance(message, dict):
+            alert_value = message.get('alerta')
+            if alert_value:
+                print(f"[Main] Alerta recebido: {alert_value}")
+                alerta_hander.process_alert(alert_value)
+            else:
+                print("[Main] Mensagem do Kafka não contém o campo 'alerta'.")
+        else:
+            print(f"[Main] Mensagem recebida não é um dicionário. Tipo: {type(message)}, Conteúdo: {message}")
+
+
 def read_qr_code():
     """
     Função para ler QR Codes da porta serial e atualizar o valor da etiqueta.
@@ -351,4 +374,8 @@ if __name__ == "__main__":
     kafka_cancel_thread.daemon = True
     kafka_cancel_thread.start()
 
+    kafka_alert_thread = Thread(target=run_kafka_alert)
+    kafka_alert_thread.daemon = True
+    kafka_alert_thread.start()
+    
     run_kafka()
