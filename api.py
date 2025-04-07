@@ -271,13 +271,14 @@ class InspectProcedure:
         """
         Cancela o procedimento atual e salva no banco de dados.
         """
-        # self.timestamp_fim = datetime.now()
+        self.timestamp_fim = datetime.now()
         self.obs = "Operação cancelada."
-        # self.save_on_db()
+        self.save_on_db()
         self.current_tracker = self.tracker_order[-1]
         self.current_tracker.isSpecting = False
         self.video_capture.stop_capture()
         print("[InspectProcedure] Procedimento cancelado.")
+        run_kafka()
 
 # Rota Flask para servir os frames do vídeo
 @app.route('/video_feed')

@@ -45,6 +45,6 @@ reunião:
 ** - rede de pallet identifica pallet branco como vazio
 ***- no video feirinha o pacote bege não identificia a etiquets
 
-? - quando manda a mensagem de cancelamento sem ter procedimento ativo quebra o sv (uma solução seria adicionar um verificador)
+? ok - quando manda a mensagem de cancelamento sem ter procedimento ativo quebra o sv (uma solução seria adicionar um verificador)
 ? - tirar o resize dos procedimentos
 ? - nas redes, ignorar a identificação de pessoas? (ignorar nas redes: 2, 4)
