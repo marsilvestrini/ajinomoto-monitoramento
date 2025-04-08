@@ -3,12 +3,13 @@ import cv2
 import numpy as np
 import time
 from kafka_config.kafka_config import KafkaMessenger
-import torch  # Import torch to check for CUDA availability
+import torch
 from dotenv import load_dotenv
 import os
 import json
 
 load_dotenv()
+
 class PacoteTracker:
     def __init__(self, model_path):
         # Check if CUDA is available
@@ -19,28 +20,44 @@ class PacoteTracker:
         self.model = YOLO(model_path).to(self.device)
         
         self.messenger_passos = KafkaMessenger(topic='passos')
-        self.prev_centers = []  # Lista para armazenar os centroides anteriores
-        self.pacotes_sem_etiqueta = []  # Lista para armazenar pacotes sem etiqueta
+        self.prev_centers = []
+        self.pacotes_sem_etiqueta = []
         self.produtos = ["balde", "caixa", "galao", "pacote"]
         self.isSpecting = True
         self.last_detection_time = None
         self.start_time = None
         self.pacotes_contados = 0
-        self.last_count_time = time.time()  # Tempo da última contagem
-        self.roi_carga = (375, 176, 205, 319)  # ROI de carga: (x, y, width, height)
-        self.roi_descarga = (177, 177, 201, 313)  # ROI de descarga: (x, y, width, height)
+        self.last_count_time = time.time()
+        self.roi_carga = (375, 176, 205, 319)
+        self.roi_descarga = (177, 176, 201, 319)
         self.y_line_position = 360
         self.statusPassoProduto = False
         self.alertPassoProduto = ''
-        self.min_confidence = 0.55  # Limite mínimo de confiança para produtos na área de descarga
+        self.min_confidence = 0.55
+
+        # Configurações para rastreamento de etiquetas
+        self.pacote_states = {}  # {id: {'last_seen': timestamp, 'has_etiqueta': bool, 'color': tuple, 'last_center': tuple}}
+        self.next_pacote_id = 0
+        self.max_etiqueta_gap = 3.0  # Tempo máximo sem etiqueta (1 segundo)
+        self.min_etiqueta_conf = 0  # Confiança mínima para considerar etiqueta válida
+        self.max_pacote_age = 5.0  # Tempo máximo sem ver um pacote antes de removê-lo
 
         self.messenger_alertas = KafkaMessenger(topic='alertas')
 
         with open(os.getenv('JSON_PATH'), 'r', encoding='utf-8') as arquivo:
             self.dados = json.load(arquivo)
 
-        self.required_time = self.dados['required_times'][0]['spectingPacotes']-1  # Segundos necessários para interromper a inspeção
-        
+        self.required_time = self.dados['required_times'][0]['spectingPacotes']-1
+
+    def preprocess_frame(self, frame):
+        """Melhora a visibilidade de etiquetas em condições de sombra"""
+        lab = cv2.cvtColor(frame, cv2.COLOR_BGR2LAB)
+        l, a, b = cv2.split(lab)
+        clahe = cv2.createCLAHE(clipLimit=1.0, tileGridSize=(8,8))
+        l_enhanced = clahe.apply(l)
+        lab_enhanced = cv2.merge((l_enhanced, a, b))
+        enhanced_frame = cv2.cvtColor(lab_enhanced, cv2.COLOR_LAB2BGR)
+        return enhanced_frame
 
     def is_inside_roi(self, box, roi):
         x1, y1, x2, y2 = box
@@ -52,9 +69,56 @@ class PacoteTracker:
         x1, y1, x2, y2 = box
         return (x1 + x2) // 2, (y1 + y2) // 2
 
-    def check_etiqueta_inside_pacote(self, pacote_box, etiqueta_boxes):
+    def assign_pacote_id(self, box):
+        """Atribui um ID único a cada pacote baseado em sua posição"""
+        center_x, center_y = self.get_center(box)
+        
+        # Verifica se corresponde a um pacote existente
+        for pacote_id, state in self.pacote_states.items():
+            last_center = state['last_center']
+            distance = ((center_x - last_center[0])**2 + (center_y - last_center[1])**2)**0.5
+            if distance < 50:  # Threshold de distância em pixels
+                return pacote_id
+                
+        # Se não encontrou correspondência, cria novo ID
+        new_id = self.next_pacote_id
+        self.next_pacote_id += 1
+        return new_id
+
+    def update_pacote_states(self, pacote_id, has_etiqueta, box):
+        """Atualiza o estado de um pacote específico"""
+        now = time.time()
+        center = self.get_center(box)
+        
+        if pacote_id not in self.pacote_states:
+            self.pacote_states[pacote_id] = {
+                'last_seen': now,
+                'has_etiqueta': has_etiqueta,
+                'last_etiqueta_time': now if has_etiqueta else None,
+                'last_center': center,
+                'color': (0, 255, 0) if has_etiqueta else (0, 0, 255)
+            }
+        else:
+            state = self.pacote_states[pacote_id]
+            state['last_seen'] = now
+            state['last_center'] = center
+            
+            if has_etiqueta:
+                state['last_etiqueta_time'] = now
+                state['has_etiqueta'] = True
+                state['color'] = (0, 255, 0)  # Verde
+            else:
+                # Verifica se ultrapassou o tempo máximo sem etiqueta
+                if state['last_etiqueta_time'] and (now - state['last_etiqueta_time']) > self.max_etiqueta_gap:
+                    state['has_etiqueta'] = False
+                    state['color'] = (0, 0, 255)  # Vermelho
+
+    def check_etiqueta_inside_pacote(self, pacote_box, etiqueta_boxes, etiqueta_confs):
+        """Verifica se há etiquetas válidas dentro do pacote"""
         x1_p, y1_p, x2_p, y2_p = pacote_box
-        for x1_e, y1_e, x2_e, y2_e in etiqueta_boxes:
+        for (x1_e, y1_e, x2_e, y2_e), conf in zip(etiqueta_boxes, etiqueta_confs):
+            if conf < self.min_etiqueta_conf:
+                continue
             if x1_e >= x1_p and y1_e >= y1_p and x2_e <= x2_p and y2_e <= y2_p:
                 return True
         return False
@@ -67,7 +131,6 @@ class PacoteTracker:
 
     def process_video(self, frame):
         try:
-            # Resize the frame
             if not self.last_detection_time:
                 self.last_detection_time = time.time()
                 self.start_time = time.time()
@@ -79,32 +142,29 @@ class PacoteTracker:
                 self.isSpecting = False
                 self.alertPassoProduto = "Timeout excedido para descarregamento de produtos."
                 print("[Produto Tracker] Timeout excedido para descarregamento de produtos.") 
-
                 json_alert = {"alerta": True}
                 self.messenger_alertas.send_message(json_alert)               
 
-            frame = cv2.resize(frame, (640, 640))
-            
-            # Move the frame to the same device as the model (if using CUDA)
+            # Move the frame to the same device as the model
             if self.device == 'cuda':
-                frame_tensor = torch.from_numpy(frame).to(self.device).float() / 255.0  # Normalize and move to GPU
-                frame_tensor = frame_tensor.permute(2, 0, 1).unsqueeze(0)  # Change shape to (1, 3, H, W)
+                frame_tensor = torch.from_numpy(frame).to(self.device).float() / 255.0
+                frame_tensor = frame_tensor.permute(2, 0, 1).unsqueeze(0)
             else:
-                frame_tensor = frame  # Use the frame as-is for CPU
+                frame_tensor = frame
 
             # Perform inference
             results = self.model(frame_tensor, verbose=False)
             
             produto_boxes = []
-            produto_confs = []  # Armazena as confianças dos produtos
-            produto_labels = []  # Armazena os labels dos produtos
+            produto_confs = []
+            produto_labels = []
             etiqueta_boxes = []
-            etiqueta_confs = []  # Armazena as confianças das etiquetas
+            etiqueta_confs = []
             
             for result in results:
                 for box in result.boxes:
                     x1, y1, x2, y2 = map(int, box.xyxy[0])
-                    conf = round(box.conf[0].item(), 2)  # Arredonda para 2 casas decimais
+                    conf = round(box.conf[0].item(), 2)
                     cls = int(box.cls[0].item())
                     label = self.model.names[cls]
 
@@ -116,7 +176,7 @@ class PacoteTracker:
                         etiqueta_boxes.append((x1, y1, x2, y2))
                         etiqueta_confs.append(conf)
 
-            # Verifica detecções em ambos os ROIs (com filtro de confiança para descarga)
+            # Verifica detecções em ambos os ROIs
             roi_carga_detections = self.check_roi_detections(produto_boxes, produto_confs, self.roi_carga)
             roi_descarga_detections = self.check_roi_detections(produto_boxes, produto_confs, self.roi_descarga, self.min_confidence)
 
@@ -130,48 +190,65 @@ class PacoteTracker:
                     self.isSpecting = False
                     print(f"[Produto Tracker] Nenhuma detecção nos ROIs por {self.required_time} segundos. Parando a inspeção.")
 
+            # Limpa estados antigos
+            now = time.time()
+            to_remove = [pid for pid, state in self.pacote_states.items() 
+                        if now - state['last_seen'] > self.max_pacote_age]
+            for pid in to_remove:
+                del self.pacote_states[pid]
+            
+            # Processa cada pacote detectado
             for idx, box in enumerate(produto_boxes):
                 x1, y1, x2, y2 = box
                 conf = produto_confs[idx]
                 label = produto_labels[idx]
                 
-                # Verifica em qual ROI o pacote está
                 in_carga = self.is_inside_roi(box, self.roi_carga)
                 in_descarga = self.is_inside_roi(box, self.roi_descarga) and conf >= self.min_confidence
                 
-                if in_carga:
-                    # ROI de Carga - mostra confiança (azul)
-                    cv2.rectangle(frame, (x1, y1), (x2, y2), (255, 0, 0), 2)
-                    cv2.putText(frame, f"{label} {conf}", (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2)
-                elif in_descarga:
-                    # ROI de Descarga - verifica etiqueta e mostra confiança (verde/vermelho)
-                    has_etiqueta = self.check_etiqueta_inside_pacote(box, etiqueta_boxes)
-                    color = (0, 255, 0) if has_etiqueta else (0, 0, 255)
-                    cv2.rectangle(frame, (x1, y1), (x2, y2), color, 2)
-                    status = "COM ETIQUETA" if has_etiqueta else "SEM ETIQUETA"
-                    cv2.putText(frame, f"{label} {status} {conf}", (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
+                if in_carga or in_descarga:
+                    pacote_id = self.assign_pacote_id(box)
+                    has_etiqueta = self.check_etiqueta_inside_pacote(box, etiqueta_boxes, etiqueta_confs)
+                    self.update_pacote_states(pacote_id, has_etiqueta, box)
+                    
+                    # Obtém o estado atualizado
+                    state = self.pacote_states.get(pacote_id, {'color': (0, 255, 0), 'has_etiqueta': False})
+                    color = state['color']
+                    status = "COM ETIQUETA" if state['has_etiqueta'] else "SEM ETIQUETA"
+                    
+                    if in_descarga:
+                        cv2.rectangle(frame, (x1, y1), (x2, y2), color, 2)
+                        cv2.putText(frame, f"{label} {status} {conf}", (x1, y1 - 10), 
+                                  cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
+                    elif in_carga:
+                        cv2.rectangle(frame, (x1, y1), (x2, y2), (255, 0, 0), 2)
+                        cv2.putText(frame, f"{label} {conf}", (x1, y1 - 10), 
+                                  cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 2)
 
+            # Desenha etiquetas
             for idx, etiqueta_box in enumerate(etiqueta_boxes):
                 x1, y1, x2, y2 = etiqueta_box
-                conf = etiqueta_confs[idx]  # Obtém a confiança correspondente
+                conf = etiqueta_confs[idx]
                 in_descarga = self.is_inside_roi(etiqueta_box, self.roi_descarga)
                 if in_descarga:
-                    cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 255), 2)  # Amarelo para etiquetas
-                    cv2.putText(frame, f"Etiqueta {conf}", (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 255), 2)
+                    cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 255), 2)
+                    cv2.putText(frame, f"Etiqueta {conf}", (x1, y1 - 10), 
+                              cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 255), 2)
 
-            # Desenha os ROIs no frame
+            # Desenha os ROIs
             # ROI de Carga (vermelho)
             roi_x, roi_y, roi_w, roi_h = self.roi_carga
             cv2.rectangle(frame, (roi_x, roi_y), (roi_x + roi_w, roi_y + roi_h), (0, 0, 255), 2)
             cv2.putText(frame, "ROI Carga", (roi_x, roi_y-10), 
-                    cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
+                      cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
             
             # ROI de Descarga (verde)
             roi_x, roi_y, roi_w, roi_h = self.roi_descarga
             cv2.rectangle(frame, (roi_x, roi_y), (roi_x + roi_w, roi_y + roi_h), (0, 255, 0), 2)
             cv2.putText(frame, "ROI Descarga", (roi_x, roi_y-10), 
-                    cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+                      cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
             
-            return frame  # Retorna o frame processado
+            return frame
         except Exception as e:
             print(f"[PacoteTracker] Error processing frame: {e}")
+            return frame
