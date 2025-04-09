@@ -45,7 +45,7 @@ class StretchTracker:
                 self.timeout_start = time.time()
                 
             # Resize and convert frame
-            # frame = cv2.resize(frame, (640, 640))
+            frame = cv2.resize(frame, (640, 640))
             # frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)  # Convert to RGB
             
             # Perform inference
@@ -85,7 +85,7 @@ class StretchTracker:
                     time.time() - self.timeout_start > self.dados['timeouts'][0]['spectingStrech']-1):
                     print("[Stretch Tracker] Timeout exceeded for stretch detection.")
                     self.statusPassoStretch = False
-                    json_to_send = {"PassoStretch": self.statusPassoStretch}
+                    json_to_send = {"Strechar o palete de plástico": self.statusPassoStretch}
                     self.alertPassoStretch = 'Strechar o palete de plástico"'
                     self.messenger_passos.send_message(json_to_send)
                     self.isSpecting = False

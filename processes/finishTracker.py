@@ -44,7 +44,7 @@ class FinishTracker:
             if self.timeout_start is None:
                 self.timeout_start = time.time()
 
-            # frame = cv2.resize(frame, (640, 640))
+            frame = cv2.resize(frame, (640, 640))
             
             # Move the frame to the same device as the model (if using CUDA)
             if self.device == 'cuda':

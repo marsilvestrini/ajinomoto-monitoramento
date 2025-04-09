@@ -3,7 +3,7 @@ from psycopg2 import sql, extras  # Importe o módulo extras
 from datetime import datetime
 
 class ProcedimentoManager:
-    def __init__(self, dbname="ajinomoto_monitoramento", user="postgres", password="postgres", host="localhost", port="5432"):
+    def __init__(self, dbname="ajinomoto_monitoramento", user="postgres", password="ajinomoto", host="localhost", port="5432"):
         """
         Construtor da classe. Inicializa a conexão com o banco de dados.
         """

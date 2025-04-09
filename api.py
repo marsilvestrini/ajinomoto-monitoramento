@@ -138,7 +138,10 @@ class InspectProcedure:
             self.video_path = os.getenv('VIDEO_PATH_DEFAULT')
 
         # Reinitialize VideoCapture with the new video path
+        self.video_capture.stop_capture()
+        # Reinitialize VideoCapture with the new video path
         self.video_capture = VideoCapture(self.video_path, self.frame_process)
+        self.video_capture.start_capture()
 
     def frame_process(self, frame):
         """
@@ -235,8 +238,8 @@ class InspectProcedure:
             self.timestamp_inicio = datetime.now()
 
             print(f"[InspectProcedure] iniciando: {self.current_tracker}")
-            self.update_video_path()  
             self.video_capture.start_capture()
+            self.update_video_path()  
         else:
             print(f"[InspectProcedure] Procedimento '{procedure_name}' não encontrado no JSON.")
 
@@ -392,7 +395,7 @@ def read_qr_code():
 # Exemplo de uso
 if __name__ == "__main__":
     # Cria uma instância de InspectProcedure
-    # inspect_procedure = InspectProcedure()
+    inspect_procedure = InspectProcedure()
 
     # Inicia o Flask em um thread separado
     flask_thread = Thread(target=run_flask)
@@ -409,8 +412,8 @@ if __name__ == "__main__":
     kafka_cancel_thread.daemon = True
     kafka_cancel_thread.start()
 
-    kafka_alert_thread = Thread(target=run_kafka_alert)
-    kafka_alert_thread.daemon = True
-    kafka_alert_thread.start()
+    # kafka_alert_thread = Thread(target=run_kafka_alert)
+    # kafka_alert_thread.daemon = True
+    # kafka_alert_thread.start()
     
     run_kafka()

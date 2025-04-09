@@ -40,7 +40,7 @@ class MacacaoTracker:
             if self.timeout_start is None:
                 self.timeout_start = time.time()  # Inicia o tempo limite
 
-            # frame = cv2.resize(frame, (640, 640))
+            frame = cv2.resize(frame, (640, 640))
 
             if self.expected_macacao_color == "macacao_branco":
                 print(f'[Macacao Tracker] Classe esperada: {self.expected_macacao_color}, pulando etapa.')

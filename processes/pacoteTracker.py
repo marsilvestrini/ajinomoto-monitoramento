@@ -176,6 +176,7 @@ class PacoteTracker:
             if not self.last_detection_time:
                 self.last_detection_time = time.time()
                 self.start_time = time.time()
+            frame = cv2.resize(frame, (640, 640))
 
             if time.time() - self.start_time > self.dados['timeouts'][0]['spectingPacotes']-1:
                 self.statusPassoProduto = False
