@@ -45,7 +45,7 @@ class StretchTracker:
                 self.timeout_start = time.time()
                 
             # Resize and convert frame
-            frame = cv2.resize(frame, (640, 640))
+            # frame = cv2.resize(frame, (640, 640))
             # frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)  # Convert to RGB
             
             # Perform inference

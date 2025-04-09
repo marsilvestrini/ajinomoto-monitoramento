@@ -51,16 +51,6 @@ class PacoteTracker:
 
         self.required_time = self.dados['required_times'][0]['spectingPacotes']-1
 
-    def preprocess_frame(self, frame):
-        """Melhora a visibilidade de etiquetas em condições de sombra"""
-        lab = cv2.cvtColor(frame, cv2.COLOR_BGR2LAB)
-        l, a, b = cv2.split(lab)
-        clahe = cv2.createCLAHE(clipLimit=1.0, tileGridSize=(8,8))
-        l_enhanced = clahe.apply(l)
-        lab_enhanced = cv2.merge((l_enhanced, a, b))
-        enhanced_frame = cv2.cvtColor(lab_enhanced, cv2.COLOR_LAB2BGR)
-        return enhanced_frame
-
     def is_inside_roi(self, box, roi):
         x1, y1, x2, y2 = box
         center_x, center_y = (x1 + x2) // 2, (y1 + y2) // 2
