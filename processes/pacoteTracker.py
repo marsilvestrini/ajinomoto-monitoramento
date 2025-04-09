@@ -42,7 +42,8 @@ class PacoteTracker:
         self.next_pacote_id = 0
         self.max_etiqueta_gap = 8.0  # Tempo máximo sem etiqueta (8 segundos)
         self.min_etiqueta_conf = 0  # Confiança mínima para considerar etiqueta válida
-        self.max_pacote_age = 5.0  # Tempo máximo sem ver um pacote antes de removê-lo
+        self.max_pacote_age = 15.0  # Tempo máximo sem ver um pacote antes de removê-lo
+        self.max_pacote_lifetime_without_etiqueta = 10.0  # Tempo máximo de vida sem etiqueta antes de alertar
 
         self.messenger_alertas = KafkaMessenger(topic='alertas')
 
@@ -91,13 +92,16 @@ class PacoteTracker:
                 'last_center': center,
                 'color': (0, 255, 0) if has_etiqueta else (0, 0, 255),
                 'alert_sent': False,
-                'in_descarga': in_descarga
+                'in_descarga': in_descarga,
+                'disappeared': False,
+                'disappeared_time': None
             }
         else:
             state = self.pacote_states[pacote_id]
             state['last_seen'] = now
             state['last_center'] = center
             state['in_descarga'] = in_descarga
+            state['disappeared'] = False  # Reset disappeared flag if we see it again
             
             if has_etiqueta:
                 state['last_etiqueta_time'] = now
@@ -126,6 +130,7 @@ class PacoteTracker:
                             self.send_etiqueta_alert(pacote_id, time_without_etiqueta)
                             state['alert_sent'] = True
 
+
     def send_etiqueta_alert(self, pacote_id, time_without):
         """Envia alerta sobre pacote sem etiqueta"""
         alert_msg = {
@@ -138,6 +143,18 @@ class PacoteTracker:
         self.messenger_alertas.send_message(alert_msg)
         print(f"[ALERTA] Pacote {pacote_id} sem etiqueta por {time_without:.1f} segundos")
 
+    def send_disappeared_alert(self, pacote_id, lifetime):
+        """Envia alerta sobre pacote que desapareceu sem etiqueta após tempo significativo"""
+        alert_msg = {
+            "alerta": True,
+            "tipo": "desaparecido_sem_etiqueta",
+            "pacote_id": pacote_id,
+            "mensagem": f"Pacote {pacote_id} desapareceu sem etiqueta após {lifetime:.1f} segundos de existência",
+            "timestamp": time.time()
+        }
+        self.messenger_alertas.send_message(alert_msg)
+        print(f"[ALERTA] Pacote {pacote_id} desapareceu sem etiqueta após {lifetime:.1f} segundos")
+        
     def check_etiqueta_inside_pacote(self, pacote_box, etiqueta_boxes, etiqueta_confs):
         """Verifica se há etiquetas válidas dentro do pacote"""
         x1_p, y1_p, x2_p, y2_p = pacote_box
@@ -215,13 +232,29 @@ class PacoteTracker:
                     self.isSpecting = False
                     print(f"[Produto Tracker] Nenhuma detecção nos ROIs por {self.required_time} segundos. Parando a inspeção.")
 
-            # Limpa estados antigos
             now = time.time()
-            to_remove = [pid for pid, state in self.pacote_states.items() 
-                        if now - state['last_seen'] > self.max_pacote_age]
+            to_remove = []
+            
+            #Lógica de desaparecimento de pacote
+            for pid, state in self.pacote_states.items():
+                # Verifica se o pacote desapareceu
+                if state['in_descarga']:
+                    if now - state['last_seen'] > 1.0 and not state['disappeared']:  # 1 segundo sem ser visto
+                        state['disappeared'] = True
+                        state['disappeared_time'] = now
+                        
+                        # Verifica se desapareceu sem etiqueta após tempo suficiente
+                        if not state['has_etiqueta']:
+                            lifetime = now - state['first_seen']
+                            if lifetime >= self.max_pacote_lifetime_without_etiqueta:
+                                self.send_disappeared_alert(pid, lifetime)
+                    # Verifica se deve remover o pacote (tempo muito longo sem ser visto)
+                    if now - state['last_seen'] > self.max_pacote_age:
+                        to_remove.append(pid)
             for pid in to_remove:
                 del self.pacote_states[pid]
-            
+                
+
             # Processa cada pacote detectado
             for idx, box in enumerate(produto_boxes):
                 x1, y1, x2, y2 = box
