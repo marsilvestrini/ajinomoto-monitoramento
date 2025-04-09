@@ -42,7 +42,7 @@ class PacoteTracker:
         self.next_pacote_id = 0
         self.max_etiqueta_gap = 8.0  # Tempo máximo sem etiqueta (8 segundos)
         self.min_etiqueta_conf = 0  # Confiança mínima para considerar etiqueta válida
-        self.max_pacote_age = 15.0  # Tempo máximo sem ver um pacote antes de removê-lo
+        self.max_pacote_age = 5.0  # Tempo máximo sem ver um pacote antes de removê-lo
         self.max_pacote_lifetime_without_etiqueta = 10.0  # Tempo máximo de vida sem etiqueta antes de alertar
 
         self.messenger_alertas = KafkaMessenger(topic='alertas')
@@ -222,7 +222,7 @@ class PacoteTracker:
             roi_carga_detections = self.check_roi_detections(produto_boxes, produto_confs, self.roi_carga)
             roi_descarga_detections = self.check_roi_detections(produto_boxes, produto_confs, self.roi_descarga, self.min_confidence)
 
-            if roi_carga_detections or roi_descarga_detections:
+            if roi_carga_detections:
                 self.last_detection_time = time.time()
             else:
                 if time.time() - self.last_detection_time > self.required_time:
@@ -247,7 +247,7 @@ class PacoteTracker:
                         if not state['has_etiqueta']:
                             lifetime = now - state['first_seen']
                             if lifetime >= self.max_pacote_lifetime_without_etiqueta:
-                                self.send_disappeared_alert(pid, lifetime)
+                                # self.send_disappeared_alert(pid, lifetime)
                     # Verifica se deve remover o pacote (tempo muito longo sem ser visto)
                     if now - state['last_seen'] > self.max_pacote_age:
                         to_remove.append(pid)
