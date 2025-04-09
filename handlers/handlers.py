@@ -1,59 +1,44 @@
-import modbus_tk.modbus_tcp as modbus_tk  # Import Modbus TCP library
+from pymodbus.client import ModbusTcpClient
+import time 
 
-class CancelHandler:
-    isCanceled = False
-
-    @classmethod
-    def get_isCanceled_value(cls):
-        return cls.isCanceled
-    
-    @classmethod
-    def set_isCanceled_value(cls, new_isCanceled_value):
-        cls.isCanceled = new_isCanceled_value
-
-class EtiquetaHandler:
-    quantidade_etiqueta = 0
-    valor_etiqueta = None
-    
-    @classmethod
-    def set_valor_etiqueta(cls, new_valor_etiqueta):
-        cls.valor_etiqueta = new_valor_etiqueta
-    
-    @classmethod
-    def set_quantidade_etiqueta(cls, new_quantidade_etiqueta):
-        cls.quantidade_etiqueta += new_quantidade_etiqueta
-    
-    @classmethod
-    def get_valor_etiqueta(cls):
-        return cls.valor_etiqueta
-    
-    @classmethod
-    def get_quantidade_etiqueta(cls):
-        return cls.quantidade_etiqueta
-    
-    @classmethod
-    def set_quantidade_etiqueta_zero(cls):
-        cls.quantidade_etiqueta = 0
-
-class AlertaHander:
+class AlertaHandler:
     def __init__(self):
-        self.alert_state = False
-        # Initialize Modbus TCP client
-        self.modbus_client = modbus_tk.TcpMaster(host='192.168.1.100', port=502)
-        self.modbus_client.set_timeout(5.0)  # Set a timeout for Modbus communication
+        self.DEVICE_IP = "192.168.10.105"  # IP do FEN20-4DIP-4DXP
+        self.MODBUS_PORT = 502  # Porta padrão Modbus TCP
+        self.OUTPUT_REGISTER_START = 0x0000  # Endereço de saída
+        self.NUM_OUTPUTS = 4  # Número de saídas digitais
+        self.client = ModbusTcpClient(self.DEVICE_IP, port=self.MODBUS_PORT)
 
-    def process_alert(self, alert_value):
-        self.alert_state = alert_value
+    def activate_outputs(self):
+        """Ativa as saídas por 5 segundos, reenviando o sinal continuamente."""
+        if self.client.connect():
+            print(f"Conectado a {self.DEVICE_IP}")
 
-        if self.alert_state:
-            print(f"[AlertHander] Alert State: {self.alert_state}")
-            try:
-                # Write to Modbus coil (address 0, value 1)
-                self.modbus_client.execute(
-                    self.modbus_client.write_single_coil(0, 1)
-                )
-                print(f"[AlertHander] Coil at address {0} set to 1.")
-            except Exception as e:
-                print(f"[AlertHander] Error writing to Modbus coil: {e}")
-            finally:
-                self.alert_state = False  # Reset alert state
+            start_time = time.time()
+            while (time.time() - start_time) < 10:  # Mantém ativado por 5 segundos
+                output_values = [1] * self.NUM_OUTPUTS
+                response = self.client.write_coils(self.OUTPUT_REGISTER_START, output_values)
+
+                if response.isError():
+                    print("Erro ao ativar saídas!")
+                    return
+                
+                print("Saídas ativadas. Reenviando sinal...")
+                time.sleep(0.5)  # Envia o sinal a cada 0.5 segundos para manter ativo
+
+            # Desativando as saídas após 5 segundos
+            self.deactivate_outputs()
+        else:
+            print("Falha na conexão com o dispositivo.")
+
+    def deactivate_outputs(self):
+        """Desativa as saídas digitais e fecha a conexão."""
+        output_values = [0] * self.NUM_OUTPUTS
+        response = self.client.write_coils(self.OUTPUT_REGISTER_START, output_values)
+        
+        if response.isError():
+            print("Erro ao desativar saídas!")
+        else:
+            print("Saídas desativadas.")
+
+        self.client.close()

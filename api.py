@@ -9,9 +9,9 @@ from processes.startTracker import StartTracker
 from processes.macacaoTracker import MacacaoTracker
 from processes.finishTracker import FinishTracker
 from pg_config.pg_config import ProcedimentoManager
-from handlers.handlers import CancelHandler, EtiquetaHandler, AlertaHander
+from handlers.handlers import AlertaHandler
 from datetime import datetime
-from video_config.video_capture import VideoCapture
+from video_config.video_capture_v2 import VideoCapture
 from dotenv import load_dotenv
 import os
 from flask import Flask, Response
@@ -35,6 +35,40 @@ app.config['CORS_HEADERS'] = 'Content-Type'
 frame_buffer = Queue(maxsize=1000)  # Ajuste o tamanho do buffer conforme necessário
 frame_lock = Lock()  # Lock para garantir acesso seguro ao buffer
 
+class CancelHandler:
+    isCanceled = False
+
+    @classmethod
+    def get_isCanceled_value(cls):
+        return cls.isCanceled
+    
+    @classmethod
+    def set_isCanceled_value(cls, new_isCanceled_value):
+        cls.isCanceled = new_isCanceled_value
+
+class EtiquetaHandler:
+    quantidade_etiqueta = 0
+    valor_etiqueta = None
+    
+    @classmethod
+    def set_valor_etiqueta(cls, new_valor_etiqueta):
+        cls.valor_etiqueta = new_valor_etiqueta
+    
+    @classmethod
+    def set_quantidade_etiqueta(cls, new_quantidade_etiqueta):
+        cls.quantidade_etiqueta += new_quantidade_etiqueta
+    
+    @classmethod
+    def get_valor_etiqueta(cls):
+        return cls.valor_etiqueta
+    
+    @classmethod
+    def get_quantidade_etiqueta(cls):
+        return cls.quantidade_etiqueta
+    
+    @classmethod
+    def set_quantidade_etiqueta_zero(cls):
+        cls.quantidade_etiqueta = 0
 
 class InspectProcedure:
     def __init__(self):
@@ -123,7 +157,7 @@ class InspectProcedure:
             if self.tracker_index < len(self.tracker_order):
                 self.current_tracker = self.tracker_order[self.tracker_index]
                 print(f"[InspectProcedure] iniciando: {self.current_tracker}")
-                # self.update_video_path()  
+                self.update_video_path()  
             else:
                 # self.video_capture.stop_capture()
                 print("[InspectProcedure] Todos os trackers finalizados.")
@@ -297,11 +331,12 @@ def run_kafka_cancel():
     Função para rodar o Kafka em um thread separado, escutando o tópico 'cancelar'.
     """
     # Cria uma instância do KafkaListener para o tópico 'cancelar'
-    kafka_cancel_listener = KafkaListener(topic='cancelar')
+    kafka_cancel_listener = KafkaListener(topic='cancelar_procedimentos')
 
     # Escuta mensagens de cancelamento do Kafka
     for message in kafka_cancel_listener.listen():
-        if isinstance(message, dict) and message.get('cancelar'):
+        if isinstance(message, dict):
+        # if isinstance(message, dict) and message.get('cancelar'):
             print("[Main] Recebido comando de cancelamento.")
             kafka_cancel_listener.commit()
             kafka_cancel_listener.close()
@@ -313,7 +348,7 @@ def run_kafka_alert():
     Função para rodar o Kafka em um thread separado.
     """
     # Cria uma instancia da classe que gerencia o alerta
-    alerta_hander = AlertaHander()
+    alerta_hander = AlertaHandler()
     # Cria uma instância do KafkaListener
     kafka_listener = KafkaListener(topic='alertas')
 
@@ -323,7 +358,7 @@ def run_kafka_alert():
             alert_value = message.get('alerta')
             if alert_value:
                 print(f"[Main] Alerta recebido: {alert_value}")
-                alerta_hander.process_alert(alert_value)
+                alerta_hander.activate_outputs()
             else:
                 print("[Main] Mensagem do Kafka não contém o campo 'alerta'.")
         else:
@@ -365,9 +400,9 @@ if __name__ == "__main__":
     flask_thread.start()
 
     # # Inicia a leitura de QR Code em um thread separado
-    # qr_thread = Thread(target=read_qr_code)
-    # qr_thread.daemon = True  # Define o thread como daemon para encerrar quando o programa principal terminar
-    # qr_thread.start()
+    qr_thread = Thread(target=read_qr_code)
+    qr_thread.daemon = True  # Define o thread como daemon para encerrar quando o programa principal terminar
+    qr_thread.start()
 
     # Inicia o Kafka em um thread separado para o tópico 'cancelar'
     kafka_cancel_thread = Thread(target=run_kafka_cancel)

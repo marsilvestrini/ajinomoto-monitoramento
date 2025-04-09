@@ -8,7 +8,7 @@ load_dotenv()
 FFMPEG_PATH = os.getenv('FFMPEG_PATH')
 
 class VideoCapture:
-    def __init__(self, rtsp_url, frame_callback=None, ffmpeg_path="ffmpeg"):
+    def __init__(self, rtsp_url, frame_callback=None, ffmpeg_path=FFMPEG_PATH):
         """
         Initialize the VideoCapture object.
 
@@ -57,14 +57,13 @@ class VideoCapture:
 
             # Convert raw frame data to a numpy array
             frame = np.frombuffer(raw_frame, dtype=np.uint8).reshape((frame_height, frame_width, 3))
-
-            rotated_image = cv2.rotate(frame, cv2.ROTATE_180)
-
-
+            # frame = cv2.rotate(frame, cv2.ROTATE_180)
             # Pass the frame to the callback function
             if self.frame_callback:
-                if not self.frame_callback(rotated_image):  # Stop if callback returns False
-                    break
+                # if not self.frame_callback(frame):  # Stop if callback returns False
+                #     break
+                self.frame_callback(frame)
+
 
         # Clean up
         self.stop_capture()
@@ -90,14 +89,13 @@ def process_frame(frame):
         return False
     return True
 
+if __name__ == "__main__":
 # RTSP URL of the stream
-rtsp_url = "rtsp://admin:@jinomoto01@192.168.10.100:554/cam/realmonitor?channel=1&subtype=0"
+    rtsp_url = "rtsp://admin:@jinomoto01@192.168.10.100:554/cam/realmonitor?channel=1&subtype=0"
+    # rtsp_url = "rtsp://admin:@jinomoto01@192.168.10.101:554/cam/realmonitor?channel=1&subtype=0"
 
-# Path to the ffmpeg executable
-FFMPEG_PATH = r"C:\Users\monitoramento_desvio\Documents\sv\ajinomoto-monitoramento\ffmpeg\bin\ffmpeg.exe"
+    # Create VideoCapture object
+    video_capture = VideoCapture(rtsp_url, frame_callback=process_frame, ffmpeg_path=FFMPEG_PATH)
 
-# Create VideoCapture object
-video_capture = VideoCapture(rtsp_url, frame_callback=process_frame, ffmpeg_path=FFMPEG_PATH)
-
-# Start capturing frames
-video_capture.start_capture(frame_width=1280, frame_height=720)
+    # Start capturing frames
+    video_capture.start_capture(frame_width=1280, frame_height=720)

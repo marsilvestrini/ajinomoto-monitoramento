@@ -34,7 +34,7 @@ class StartTracker:
         self.required_time = self.dados['required_times'][0]['spectingStart']-1  # Segundos necessários sem detecção para confirmar remoção
         
         # Definir a ROI (x, y, width, height)
-        self.roi_x, self.roi_y, self.roi_width, self.roi_height = 375, 176, 175, 319
+        self.roi_x, self.roi_y, self.roi_width, self.roi_height = 375, 176, 185, 320
 
     def process_video(self, frame):
         try:
@@ -68,10 +68,10 @@ class StartTracker:
                     cls = int(box.cls)
                     x1, y1, x2, y2 = box.xyxy[0].tolist()
                     label = self.model.names[cls]
-                    
+                    conf = round(box.conf[0].item(), 2)
                     # Verificar se o bounding box está dentro da ROI
                     if (x1 >= roi_x1 and y1 >= roi_y1 and 
-                        x2 <= roi_x2 and y2 <= roi_y2 and label == 'pallet'):
+                        x2 <= roi_x2 and y2 <= roi_y2 and label == 'pallet' and conf >= 0.65):
                         detected = True
                         filtered_boxes.append([x1, y1, x2, y2])
                         filtered_cls.append(cls)

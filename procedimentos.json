@@ -152,7 +152,7 @@
       "spectingPalletColor": 240,
       "spectingPalletClass": 240,
       "spectingStrech": 240,
-      "spectingPacotes": 5000,
+      "spectingPacotes": 480,
       "spectingFinish" : 240
 
     }
@@ -160,13 +160,13 @@
 
   "required_times": [
     {
-      "spectingStrech": 10,
-      "spectingPacotes": 5,
-      "spectingStart": 10,
-      "spectingFinish": 10,
-      "spectingMacacao": 10,
-      "spectingPalletColor": 3,
-      "spectingPalletClass": 10
+      "spectingStrech": 20,
+      "spectingPacotes": 20,
+      "spectingStart": 20,
+      "spectingFinish": 20,
+      "spectingMacacao": 20,
+      "spectingPalletColor": 20,
+      "spectingPalletClass": 20
       
     }
   ]
