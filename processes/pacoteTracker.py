@@ -246,8 +246,8 @@ class PacoteTracker:
                         # Verifica se desapareceu sem etiqueta após tempo suficiente
                         if not state['has_etiqueta']:
                             lifetime = now - state['first_seen']
-                            if lifetime >= self.max_pacote_lifetime_without_etiqueta:
-                                # self.send_disappeared_alert(pid, lifetime)
+                            # if lifetime >= self.max_pacote_lifetime_without_etiqueta:
+                            #     self.send_disappeared_alert(pid, lifetime)
                     # Verifica se deve remover o pacote (tempo muito longo sem ser visto)
                     if now - state['last_seen'] > self.max_pacote_age:
                         to_remove.append(pid)
