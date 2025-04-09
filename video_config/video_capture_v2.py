@@ -1,6 +1,11 @@
 import subprocess
 import numpy as np
 import cv2
+from dotenv import load_dotenv
+import os
+load_dotenv()
+
+FFMPEG_PATH = os.getenv('FFMPEG_PATH')
 
 class VideoCapture:
     def __init__(self, rtsp_url, frame_callback=None, ffmpeg_path="ffmpeg"):
@@ -89,7 +94,7 @@ def process_frame(frame):
 rtsp_url = "rtsp://admin:@jinomoto01@192.168.10.100:554/cam/realmonitor?channel=1&subtype=0"
 
 # Path to the ffmpeg executable
-FFMPEG_PATH = r"C:\Users\admin.LMAPD2TEST\Downloads\ffmpeg-7.1-full_build\ffmpeg-7.1-full_build\bin\ffmpeg.exe"
+FFMPEG_PATH = r"C:\Users\monitoramento_desvio\Documents\sv\ajinomoto-monitoramento\ffmpeg\bin\ffmpeg.exe"
 
 # Create VideoCapture object
 video_capture = VideoCapture(rtsp_url, frame_callback=process_frame, ffmpeg_path=FFMPEG_PATH)
