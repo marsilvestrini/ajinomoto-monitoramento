@@ -36,9 +36,11 @@ class PacoteTracker:
         self.min_confidence = 0.55
 
         # Configurações para rastreamento de etiquetas
-        self.pacote_states = {}  # {id: {'last_seen': timestamp, 'has_etiqueta': bool, 'color': tuple, 'last_center': tuple}}
+        self.pacote_states = {}  # {id: {'first_seen': timestamp, 'last_seen': timestamp, 'has_etiqueta': bool, 
+                               # 'color': tuple, 'last_center': tuple, 'last_etiqueta_time': timestamp, 
+                               # 'alert_sent': bool, 'in_descarga': bool}}
         self.next_pacote_id = 0
-        self.max_etiqueta_gap = 3.0  # Tempo máximo sem etiqueta (1 segundo)
+        self.max_etiqueta_gap = 8.0  # Tempo máximo sem etiqueta (8 segundos)
         self.min_etiqueta_conf = 0  # Confiança mínima para considerar etiqueta válida
         self.max_pacote_age = 5.0  # Tempo máximo sem ver um pacote antes de removê-lo
 
@@ -85,33 +87,66 @@ class PacoteTracker:
         self.next_pacote_id += 1
         return new_id
 
-    def update_pacote_states(self, pacote_id, has_etiqueta, box):
+    def update_pacote_states(self, pacote_id, has_etiqueta, box, in_descarga):
         """Atualiza o estado de um pacote específico"""
         now = time.time()
         center = self.get_center(box)
         
         if pacote_id not in self.pacote_states:
             self.pacote_states[pacote_id] = {
+                'first_seen': now,
                 'last_seen': now,
                 'has_etiqueta': has_etiqueta,
                 'last_etiqueta_time': now if has_etiqueta else None,
                 'last_center': center,
-                'color': (0, 255, 0) if has_etiqueta else (0, 0, 255)
+                'color': (0, 255, 0) if has_etiqueta else (0, 0, 255),
+                'alert_sent': False,
+                'in_descarga': in_descarga
             }
         else:
             state = self.pacote_states[pacote_id]
             state['last_seen'] = now
             state['last_center'] = center
+            state['in_descarga'] = in_descarga
             
             if has_etiqueta:
                 state['last_etiqueta_time'] = now
                 state['has_etiqueta'] = True
                 state['color'] = (0, 255, 0)  # Verde
+                state['alert_sent'] = False  # Resetar alerta quando etiqueta é detectada
             else:
-                # Verifica se ultrapassou o tempo máximo sem etiqueta
-                if state['last_etiqueta_time'] and (now - state['last_etiqueta_time']) > self.max_etiqueta_gap:
-                    state['has_etiqueta'] = False
-                    state['color'] = (0, 0, 255)  # Vermelho
+                # Só verifica alertas para pacotes na área de descarga
+                if in_descarga:
+                    # Verifica se ultrapassou o tempo máximo sem etiqueta
+                    time_without_etiqueta = 0
+                    
+                    if state['last_etiqueta_time']:
+                        # Pacote que já teve etiqueta mas perdeu
+                        time_without_etiqueta = now - state['last_etiqueta_time']
+                    else:
+                        # Pacote que nunca teve etiqueta
+                        time_without_etiqueta = now - state['first_seen']
+                    
+                    if time_without_etiqueta > self.max_etiqueta_gap:
+                        state['has_etiqueta'] = False
+                        state['color'] = (0, 0, 255)  # Vermelho
+                        
+                        # Envia alerta se ainda não foi enviado
+                        if not state['alert_sent']:
+                            self.send_etiqueta_alert(pacote_id, time_without_etiqueta)
+                            state['alert_sent'] = True
+
+    def send_etiqueta_alert(self, pacote_id, time_without):
+        """Envia alerta sobre pacote sem etiqueta"""
+        alert_msg = {
+            "alerta": True,
+            "tipo": "sem_etiqueta",
+            "pacote_id": pacote_id,
+            "mensagem": f"Pacote {pacote_id} está sem etiqueta há {time_without:.1f} segundos na área de descarga",
+            "timestamp": time.time()
+        }
+        self.messenger_alertas.send_message(alert_msg)
+        print(f"[ALERTA] Pacote {pacote_id} sem etiqueta por {time_without:.1f} segundos")
 
     def check_etiqueta_inside_pacote(self, pacote_box, etiqueta_boxes, etiqueta_confs):
         """Verifica se há etiquetas válidas dentro do pacote"""
@@ -209,14 +244,27 @@ class PacoteTracker:
                 if in_carga or in_descarga:
                     pacote_id = self.assign_pacote_id(box)
                     has_etiqueta = self.check_etiqueta_inside_pacote(box, etiqueta_boxes, etiqueta_confs)
-                    self.update_pacote_states(pacote_id, has_etiqueta, box)
+                    self.update_pacote_states(pacote_id, has_etiqueta, box, in_descarga)
                     
                     # Obtém o estado atualizado
                     state = self.pacote_states.get(pacote_id, {'color': (0, 255, 0), 'has_etiqueta': False})
                     color = state['color']
-                    status = "COM ETIQUETA" if state['has_etiqueta'] else "SEM ETIQUETA"
                     
                     if in_descarga:
+                        # Calcula tempo sem etiqueta
+                        time_without = 0
+                        if not state['has_etiqueta']:
+                            if state['last_etiqueta_time']:
+                                # Já teve etiqueta antes
+                                time_without = now - state['last_etiqueta_time']
+                            else:
+                                # Nunca teve etiqueta
+                                time_without = now - state['first_seen']
+                            
+                            status = f"SEM ETIQUETA ({time_without:.1f}s)"
+                        else:
+                            status = "COM ETIQUETA"
+                        
                         cv2.rectangle(frame, (x1, y1), (x2, y2), color, 2)
                         cv2.putText(frame, f"{label} {status} {conf}", (x1, y1 - 10), 
                                   cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
