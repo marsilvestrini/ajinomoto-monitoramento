@@ -197,13 +197,13 @@ class InspectProcedure:
                 print(f"[InspectProcedure] iniciando: {self.current_tracker}")
                 self.update_video_path()  
             else:
-                # self.video_capture.stop_capture()
+                self.video_capture.stop_capture()
                 print("[InspectProcedure] Todos os trackers finalizados.")
                 self.timestamp_fim = datetime.now()  # Captura o timestamp de fim
                 self.save_on_db()
-                self.video_recorder.stop_recording()
-                run_kafka()
-                return  # Retorna para continuar a escutar o Kafka
+                # run_kafka()
+                os._exit(0)
+                
 
         # Processa o frame no tracker atual
         processed_frame = self.current_tracker.process_video(frame)
@@ -329,7 +329,8 @@ class InspectProcedure:
         self.video_capture.stop_capture()
         self.video_recorder.stop_recording()
         print("[InspectProcedure] Procedimento cancelado.")
-        run_kafka()
+        # run_kafka()
+        os._exit(0)
 
 # Rota Flask para servir os frames do vídeo
 @app.route('/video_feed')
@@ -370,8 +371,8 @@ def run_kafka():
             if procedure_name:
                 print(f"[Main] Procedimento recebido: {procedure_name}")
                 kafka_listener.commit()
-                kafka_listener.close()
                 video.process_video_on_procedure(procedure_name)
+                kafka_listener.close()
             else:
                 print("[Main] Mensagem do Kafka não contém o campo 'procedimento'.")
         else:
@@ -382,7 +383,7 @@ def run_kafka_cancel():
     Função para rodar o Kafka em um thread separado, escutando o tópico 'cancelar'.
     """
     # Cria uma instância do KafkaListener para o tópico 'cancelar'
-    kafka_cancel_listener = KafkaListener(topic='cancelar_procedimentos')
+    kafka_cancel_listener = KafkaListener(topic='cancelar_procedimento')
 
     # Escuta mensagens de cancelamento do Kafka
     for message in kafka_cancel_listener.listen():

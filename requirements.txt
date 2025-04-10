@@ -1,14 +1,14 @@
 Flask==3.1.0
 flask_cors==5.0.1
-kafka==1.0.0
-kafka_python==2.0.0
+kafka-python>=2.0.2
 numpy==2.2.4
-opencv_python==4.11.0.86
+opencv-python-headless==4.5.5.64
 psycopg2_binary==2.9.10
 python-dotenv==1.0.1
 Requests==2.32.3
-torch
-torchvision
+# torch
+# torchvision
 ultralytics==8.3.66
 pyserial
 modbus_tk
+pymodbus
