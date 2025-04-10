@@ -3,3 +3,4 @@
 /input
 /ffmpeg 
 /recordings
+/**/__pycache__/
