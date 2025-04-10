@@ -14,8 +14,8 @@ reunião:
 6 ok -              melhorar a rede 4 - treinar com L e adicionar classe pessoa
 7 ok -              colocar uma coluna a mais no database pra adicionar o novo passo
 8 ok -              validar redes 1(nok), 2(ok), 4(nok)
-    8.1 ok -           rede 1 estag anotando pacote branco
-    8.2 ok -           rede 4 quase perfeito, anotar mais algumas imagens (ja fiz upload)
+    8.1 ok -        rede 1 estag anotando pacote branco
+    8.2 ok -        rede 4 quase perfeito, anotar mais algumas imagens (ja fiz upload)
 9 * ok -            atualizar os tempos de contabilização de tempo usando o json (stretch e produtos ok)
 10 * ok -           eu acho que algumas logicas de contabilização de tempo de procedimento estão erradas
 11 * ok -           na detecção de classe do pallet, fazer pular quando classe for descoberta
@@ -28,23 +28,30 @@ reunião:
     13.2 ok -       azul, laranja ok e amarelo ok
 14 ok -             validar rede 3
 15 ok -             atualizar db config para etapa_7 
+16 ok -             fazer o emit alerta ser um tópico da api main
 
-* -                 após a adição da classe pessoa na rede 1, arrumar o tracking e a emissão de alertas pra produtos sem etiqueta
-* -                 achar e adicionar o melhor posicionamento de roi pros procedimentos
+17 ok -             achar e adicionar o melhor posicionamento de roi pros procedimentos
+18 ok -             filtrar pacotes mal identificados com base na confidence
+19 ok -             fazer tracking com id por produto
+20 ok -             lógica de retensão de etiquetas com base em tempo
+21 ok -             adicionar a emissão de alertas pra produtos sem etiqueta
+    21.1 -          verificar se a emissão de alerta deve ser resetada após 8s ou apenas um alerta por pacote deve ser feita
+22 ajustar -        fazer com que pacotes soterrados sem etiquetas sejam alertados
+23 ok -             adicionar o restante dos procedimentos
+    23.1 -          falta polpa e pallet fechado rustico (aguardando rede 6 e novo procedimento)
+24 ok -             rede de pallet identifica pallet branco como vazio
+25 ok -             tirar o resize dos procedimentos
+26 ok -             nas redes, ignorar a identificação de pessoas? (ignorar nas redes: 2, 4)
 
 
 * -                 fazer rede de identificação de etiqueta lateral (rede 6) - pallet fechado rustico e polpa
 * -                 fazer um tracker pra captura das etiquetas laterais
 
-
-
-* -                 adicionar o restante dos procedimentos
-* ok -                 fazer o emit alerta ser um tópico da api main
 * -                 dockerizar
 
-** - rede de pallet identifica pallet branco como vazio
-***- no video feirinha o pacote bege não identificia a etiquets
 
-? ok - quando manda a mensagem de cancelamento sem ter procedimento ativo quebra o sv (uma solução seria adicionar um verificador)
-? - tirar o resize dos procedimentos
-? - nas redes, ignorar a identificação de pessoas? (ignorar nas redes: 2, 4)
+***- no video feirinha o pacote bege não identificia a etiqueta
+
+? - sv ta engasgando
+? - as vezes o cancelamento não é consumido pelo sv
+? - quando manda a mensagem de cancelamento sem ter procedimento ativo quebra o sv (uma solução seria adicionar um verificador)

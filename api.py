@@ -11,7 +11,7 @@ from processes.finishTracker import FinishTracker
 from pg_config.pg_config import ProcedimentoManager
 from handlers.handlers import AlertaHandler
 from datetime import datetime
-from video_config.video_capture_v2 import VideoCapture
+from video_config.video_capture import VideoCapture
 from dotenv import load_dotenv
 import os
 from flask import Flask, Response
@@ -92,10 +92,10 @@ class InspectProcedure:
         self.palletTracker = PalletTracker(self.model_rede2, self.expected_color, self.expected_pallet_class)
         self.macacaoTracker = MacacaoTracker(self.model_rede3, self.expected_macacao_color)
 
-        self.startTracker = StartTracker(self.model_rede5)
+        self.startTracker = StartTracker(self.model_rede1)
         self.pacoteTracker = PacoteTracker(self.model_rede1)
         self.stretchTracker = StretchTracker(self.model_rede4)
-        self.finishTracker = FinishTracker(self.model_rede5)
+        self.finishTracker = FinishTracker(self.model_rede1)
         
 
         self.tracker_order = [self.startTracker, self.macacaoTracker, self.palletTracker, self.pacoteTracker, self.stretchTracker, self.finishTracker]
@@ -160,14 +160,15 @@ class InspectProcedure:
             if self.tracker_index < len(self.tracker_order):
                 self.current_tracker = self.tracker_order[self.tracker_index]
                 print(f"[InspectProcedure] iniciando: {self.current_tracker}")
-                self.update_video_path()  
+                # self.update_video_path()  
             else:
-                # self.video_capture.stop_capture()
+                self.video_capture.stop_capture()
                 print("[InspectProcedure] Todos os trackers finalizados.")
                 self.timestamp_fim = datetime.now()  # Captura o timestamp de fim
                 self.save_on_db()
-                run_kafka()
-                return  # Retorna para continuar a escutar o Kafka
+                # run_kafka()
+                os._exit(0)
+                
 
         # Processa o frame no tracker atual
         processed_frame = self.current_tracker.process_video(frame)
@@ -281,7 +282,8 @@ class InspectProcedure:
         self.current_tracker.isSpecting = False
         self.video_capture.stop_capture()
         print("[InspectProcedure] Procedimento cancelado.")
-        run_kafka()
+        # run_kafka()
+        os._exit(0)
 
 # Rota Flask para servir os frames do vídeo
 @app.route('/video_feed')
@@ -322,8 +324,8 @@ def run_kafka():
             if procedure_name:
                 print(f"[Main] Procedimento recebido: {procedure_name}")
                 kafka_listener.commit()
-                kafka_listener.close()
                 video.process_video_on_procedure(procedure_name)
+                kafka_listener.close()
             else:
                 print("[Main] Mensagem do Kafka não contém o campo 'procedimento'.")
         else:
@@ -334,7 +336,7 @@ def run_kafka_cancel():
     Função para rodar o Kafka em um thread separado, escutando o tópico 'cancelar'.
     """
     # Cria uma instância do KafkaListener para o tópico 'cancelar'
-    kafka_cancel_listener = KafkaListener(topic='cancelar_procedimentos')
+    kafka_cancel_listener = KafkaListener(topic='cancelar_procedimento')
 
     # Escuta mensagens de cancelamento do Kafka
     for message in kafka_cancel_listener.listen():
@@ -342,7 +344,7 @@ def run_kafka_cancel():
         # if isinstance(message, dict) and message.get('cancelar'):
             print("[Main] Recebido comando de cancelamento.")
             kafka_cancel_listener.commit()
-            kafka_cancel_listener.close()
+            # kafka_cancel_listener.close()
             CancelHandler.set_isCanceled_value(True)  # Sinaliza o cancelamento
 
 
@@ -362,6 +364,7 @@ def run_kafka_alert():
             if alert_value:
                 print(f"[Main] Alerta recebido: {alert_value}")
                 alerta_hander.activate_outputs()
+                kafka_listener.commit()
             else:
                 print("[Main] Mensagem do Kafka não contém o campo 'alerta'.")
         else:
@@ -395,7 +398,7 @@ def read_qr_code():
 # Exemplo de uso
 if __name__ == "__main__":
     # Cria uma instância de InspectProcedure
-    inspect_procedure = InspectProcedure()
+    # inspect_procedure = InspectProcedure()
 
     # Inicia o Flask em um thread separado
     flask_thread = Thread(target=run_flask)
@@ -412,8 +415,8 @@ if __name__ == "__main__":
     kafka_cancel_thread.daemon = True
     kafka_cancel_thread.start()
 
-    # kafka_alert_thread = Thread(target=run_kafka_alert)
-    # kafka_alert_thread.daemon = True
-    # kafka_alert_thread.start()
+    kafka_alert_thread = Thread(target=run_kafka_alert)
+    kafka_alert_thread.daemon = True
+    kafka_alert_thread.start()
     
     run_kafka()
