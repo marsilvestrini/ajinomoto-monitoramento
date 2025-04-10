@@ -70,8 +70,10 @@ class StartTracker:
                     label = self.model.names[cls]
                     conf = round(box.conf[0].item(), 2)
                     # Verificar se o bounding box está dentro da ROI
+                    # if (x1 >= roi_x1 and y1 >= roi_y1 and 
+                    #     x2 <= roi_x2 and y2 <= roi_y2 and label == 'pallet' and conf >= 0.65):
                     if (x1 >= roi_x1 and y1 >= roi_y1 and 
-                        x2 <= roi_x2 and y2 <= roi_y2 and label == 'pallet' and conf >= 0.65):
+                        x2 <= roi_x2 and y2 <= roi_y2):
                         detected = True
                         filtered_boxes.append([x1, y1, x2, y2])
                         filtered_cls.append(cls)

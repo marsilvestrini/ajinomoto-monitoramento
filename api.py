@@ -35,6 +35,10 @@ app.config['CORS_HEADERS'] = 'Content-Type'
 frame_buffer = Queue(maxsize=1000)  # Ajuste o tamanho do buffer conforme necessário
 frame_lock = Lock()  # Lock para garantir acesso seguro ao buffer
 
+# Cria a pasta recordings se não existir
+if not os.path.exists('recordings'):
+    os.makedirs('recordings')
+
 class CancelHandler:
     isCanceled = False
 
@@ -70,6 +74,35 @@ class EtiquetaHandler:
     def set_quantidade_etiqueta_zero(cls):
         cls.quantidade_etiqueta = 0
 
+class VideoRecorder:
+    def __init__(self):
+        self.writer = None
+        self.recording = False
+        self.filename = None
+        self.frame_size = None
+    
+    def start_recording(self, procedure_name):
+        # Cria um nome de arquivo único baseado no timestamp e nome do procedimento
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        self.filename = f"recordings/{procedure_name}_{timestamp}.avi"
+        
+        # Define o codec e cria o objeto VideoWriter
+        fourcc = cv2.VideoWriter_fourcc(*'XVID')
+        self.writer = cv2.VideoWriter(self.filename, fourcc, 20.0, self.frame_size)
+        self.recording = True
+        print(f"[VideoRecorder] Iniciando gravação em: {self.filename}")
+    
+    def write_frame(self, frame):
+        if self.recording and self.writer is not None:
+            self.writer.write(frame)
+    
+    def stop_recording(self):
+        if self.recording and self.writer is not None:
+            self.writer.release()
+            self.recording = False
+            print(f"[VideoRecorder] Gravação finalizada: {self.filename}")
+            self.writer = None
+
 class InspectProcedure:
     def __init__(self):
         self.video_path = os.getenv('VIDEO_PATH_START')
@@ -92,12 +125,11 @@ class InspectProcedure:
         self.palletTracker = PalletTracker(self.model_rede2, self.expected_color, self.expected_pallet_class)
         self.macacaoTracker = MacacaoTracker(self.model_rede3, self.expected_macacao_color)
 
-        self.startTracker = StartTracker(self.model_rede5)
+        self.startTracker = StartTracker(self.model_rede1)
         self.pacoteTracker = PacoteTracker(self.model_rede1)
         self.stretchTracker = StretchTracker(self.model_rede4)
-        self.finishTracker = FinishTracker(self.model_rede5)
+        self.finishTracker = FinishTracker(self.model_rede1)
         
-
         self.tracker_order = [self.startTracker, self.macacaoTracker, self.palletTracker, self.pacoteTracker, self.stretchTracker, self.finishTracker]
         self.tracker_index = 0
 
@@ -114,6 +146,9 @@ class InspectProcedure:
 
         # Initialize VideoCapture with a callback to process frames
         self.video_capture = VideoCapture(self.video_path, self.frame_process)
+        
+        # Initialize VideoRecorder
+        self.video_recorder = VideoRecorder()
 
     def update_video_path(self):
         """
@@ -166,11 +201,20 @@ class InspectProcedure:
                 print("[InspectProcedure] Todos os trackers finalizados.")
                 self.timestamp_fim = datetime.now()  # Captura o timestamp de fim
                 self.save_on_db()
+                self.video_recorder.stop_recording()
                 run_kafka()
                 return  # Retorna para continuar a escutar o Kafka
 
         # Processa o frame no tracker atual
         processed_frame = self.current_tracker.process_video(frame)
+        
+        # Se for o primeiro frame, define o tamanho do frame para o VideoWriter
+        if self.video_recorder.frame_size is None:
+            height, width = processed_frame.shape[:2]
+            self.video_recorder.frame_size = (width, height)
+        
+        # Grava o frame processado
+        self.video_recorder.write_frame(processed_frame)
 
         # Adiciona o frame processado ao buffer
         with frame_lock:
@@ -236,6 +280,9 @@ class InspectProcedure:
 
             # Captura o timestamp de início
             self.timestamp_inicio = datetime.now()
+            
+            # Inicia a gravação do vídeo
+            self.video_recorder.start_recording(procedure_name)
 
             print(f"[InspectProcedure] iniciando: {self.current_tracker}")
             self.video_capture.start_capture()
@@ -280,6 +327,7 @@ class InspectProcedure:
         self.current_tracker = self.tracker_order[-1]
         self.current_tracker.isSpecting = False
         self.video_capture.stop_capture()
+        self.video_recorder.stop_recording()
         print("[InspectProcedure] Procedimento cancelado.")
         run_kafka()
 
@@ -339,12 +387,9 @@ def run_kafka_cancel():
     # Escuta mensagens de cancelamento do Kafka
     for message in kafka_cancel_listener.listen():
         if isinstance(message, dict):
-        # if isinstance(message, dict) and message.get('cancelar'):
             print("[Main] Recebido comando de cancelamento.")
             kafka_cancel_listener.commit()
-            kafka_cancel_listener.close()
             CancelHandler.set_isCanceled_value(True)  # Sinaliza o cancelamento
-
 
 def run_kafka_alert():
     """
@@ -362,17 +407,16 @@ def run_kafka_alert():
             if alert_value:
                 print(f"[Main] Alerta recebido: {alert_value}")
                 alerta_hander.activate_outputs()
+                kafka_listener.commit()
             else:
                 print("[Main] Mensagem do Kafka não contém o campo 'alerta'.")
         else:
             print(f"[Main] Mensagem recebida não é um dicionário. Tipo: {type(message)}, Conteúdo: {message}")
 
-
 def read_qr_code():
     """
     Função para ler QR Codes da porta serial e atualizar o valor da etiqueta.
     """
-    #ser = serial.Serial(port='/dev/ttyACM0', baudrate=9600, timeout=1)  # Ajuste a porta e baudrate conforme necessário
     ser = serial.Serial(port='COM3', baudrate=9600, timeout=1)  # Ajuste a porta e baudrate conforme necessário
     print("Aguardando leitura do QR Code...")
     messenger_etiquetas = KafkaMessenger(topic='etiquetas')
@@ -392,19 +436,19 @@ def read_qr_code():
         print("Encerrando leitura de QR Code...")
         ser.close()
 
-# Exemplo de uso
 if __name__ == "__main__":
-    # Cria uma instância de InspectProcedure
-    inspect_procedure = InspectProcedure()
+    # Cria a pasta recordings se não existir
+    if not os.path.exists('recordings'):
+        os.makedirs('recordings')
 
     # Inicia o Flask em um thread separado
     flask_thread = Thread(target=run_flask)
-    flask_thread.daemon = True  # Define o thread como daemon para encerrar quando o programa principal terminar
+    flask_thread.daemon = True
     flask_thread.start()
 
-    # # Inicia a leitura de QR Code em um thread separado
+    # Inicia a leitura de QR Code em um thread separado
     qr_thread = Thread(target=read_qr_code)
-    qr_thread.daemon = True  # Define o thread como daemon para encerrar quando o programa principal terminar
+    qr_thread.daemon = True
     qr_thread.start()
 
     # Inicia o Kafka em um thread separado para o tópico 'cancelar'
@@ -412,8 +456,8 @@ if __name__ == "__main__":
     kafka_cancel_thread.daemon = True
     kafka_cancel_thread.start()
 
-    # kafka_alert_thread = Thread(target=run_kafka_alert)
-    # kafka_alert_thread.daemon = True
-    # kafka_alert_thread.start()
+    kafka_alert_thread = Thread(target=run_kafka_alert)
+    kafka_alert_thread.daemon = True
+    kafka_alert_thread.start()
     
     run_kafka()
