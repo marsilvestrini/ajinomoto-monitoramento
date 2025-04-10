@@ -11,7 +11,7 @@ from processes.finishTracker import FinishTracker
 from pg_config.pg_config import ProcedimentoManager
 from handlers.handlers import AlertaHandler
 from datetime import datetime
-from video_config.video_capture import VideoCapture
+from video_config.video_capture_v2 import VideoCapture
 from dotenv import load_dotenv
 import os
 from flask import Flask, Response
@@ -160,7 +160,7 @@ class InspectProcedure:
             if self.tracker_index < len(self.tracker_order):
                 self.current_tracker = self.tracker_order[self.tracker_index]
                 print(f"[InspectProcedure] iniciando: {self.current_tracker}")
-                # self.update_video_path()  
+                self.update_video_path()  
             else:
                 self.video_capture.stop_capture()
                 print("[InspectProcedure] Todos os trackers finalizados.")

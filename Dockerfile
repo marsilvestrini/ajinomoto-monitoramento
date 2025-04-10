@@ -1,7 +1,7 @@
-# Usa a imagem base do Ubuntu 22.04
-FROM ubuntu:22.04
+# Use a imagem oficial do NVIDIA CUDA como base
+FROM nvidia/cuda:12.1.1-base-ubuntu22.04
 
-# Instala dependências necessárias incluindo as bibliotecas do sistema para OpenCV
+# Instala dependências do sistema
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     python3.10 \
@@ -15,24 +15,23 @@ RUN apt-get update && \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Configura o python3.10 como padrão
+# Configura o python padrão
 RUN update-alternatives --install /usr/bin/python python /usr/bin/python3.10 1
 
-# Define o diretório de trabalho
 WORKDIR /app
 
 # Copia os arquivos necessários
 COPY requirements.txt .
 COPY api.py .
 
-# Instala as dependências do Python
+# Instala o PyTorch com CUDA primeiro (versão compatível com seu driver)
+# Verifique a versão compatível em https://pytorch.org/get-started/locally/
+RUN pip install --no-cache-dir torch torchvision --extra-index-url https://download.pytorch.org/whl/cu121
+
+# Instala as demais dependências
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copia o restante dos arquivos (se necessário)
 COPY . .
 
-# Comando que será executado quando o container iniciar
-CMD ["bash", "-c", "python -u api.py & tail -f /dev/null"]
-
-# Expõe a porta da API
+CMD ["bash", "-c", "while true; do python -u api.py; done"]
 EXPOSE 5000
