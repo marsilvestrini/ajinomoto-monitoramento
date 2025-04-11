@@ -16,23 +16,28 @@ from dotenv import load_dotenv
 import os
 from flask import Flask, Response
 from threading import Thread, Lock
-from queue import Queue
+from queue import Queue, Empty
 import time
 import serial
 from flask_cors import CORS, cross_origin
 import logging
+import torch
+
+torch.backends.cudnn.enabled = True
+torch.backends.cudnn.benchmark = True
+
 
 load_dotenv()
 
-log = logging.getLogger('werkzeug')
-log.setLevel(logging.ERROR)
+# log = logging.getLogger('werkzeug')
+# log.setLevel(logging.ERROR)
 
 app = Flask(__name__)
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
 # Buffer para armazenar os frames processados
-frame_buffer = Queue(maxsize=1000)  # Ajuste o tamanho do buffer conforme necessário
+frame_buffer = Queue(maxsize=10000)  # Ajuste o tamanho do buffer conforme necessário
 frame_lock = Lock()  # Lock para garantir acesso seguro ao buffer
 
 # Cria a pasta recordings se não existir
@@ -154,6 +159,7 @@ class InspectProcedure:
         """
         Update the video path based on the current tracker.
         """
+        print('a')
         tracker_name = self.current_tracker.__class__.__name__
         if tracker_name == "StartTracker":
             self.video_path = os.getenv('VIDEO_PATH_START')
@@ -171,12 +177,14 @@ class InspectProcedure:
             self.video_path = os.getenv('VIDEO_PATH_FINISH')
         else:
             self.video_path = os.getenv('VIDEO_PATH_DEFAULT')
-
+        
         # Reinitialize VideoCapture with the new video path
         self.video_capture.stop_capture()
+        
         # Reinitialize VideoCapture with the new video path
         self.video_capture = VideoCapture(self.video_path, self.frame_process)
         self.video_capture.start_capture()
+
 
     def frame_process(self, frame):
         """
@@ -339,13 +347,15 @@ def video_feed():
     def generate():
         global frame_buffer
         while True:
-            frame = frame_buffer.get(block=True)  # Espera bloqueando até que um frame esteja disponível
-            ret, jpeg = cv2.imencode('.jpg', frame)
-            if ret:
-                frame_bytes = jpeg.tobytes()
-                yield (b'--frame\r\n'
-                       b'Content-Type: image/jpeg\r\n\r\n' + frame_bytes + b'\r\n\r\n')
-
+            try:
+                frame = frame_buffer.get(block=True, timeout=0.1)  # Espera bloqueando até que um frame esteja disponível
+                ret, jpeg = cv2.imencode('.jpg', frame)
+                if ret:
+                    frame_bytes = jpeg.tobytes()
+                    yield (b'--frame\r\n'
+                        b'Content-Type: image/jpeg\r\n\r\n' + frame_bytes + b'\r\n\r\n')
+            except Empty:
+                time.sleep(0.05)  # ou coloque um `time.sleep(0.05)` para evitar uso excessivo de CPU
     return Response(generate(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 def run_flask():
@@ -383,7 +393,7 @@ def run_kafka_cancel():
     Função para rodar o Kafka em um thread separado, escutando o tópico 'cancelar'.
     """
     # Cria uma instância do KafkaListener para o tópico 'cancelar'
-    kafka_cancel_listener = KafkaListener(topic='cancelar_procedimento')
+    kafka_cancel_listener = KafkaListener(topic='cancelar_procedimentos')
 
     # Escuta mensagens de cancelamento do Kafka
     for message in kafka_cancel_listener.listen():
@@ -391,6 +401,8 @@ def run_kafka_cancel():
             print("[Main] Recebido comando de cancelamento.")
             kafka_cancel_listener.commit()
             CancelHandler.set_isCanceled_value(True)  # Sinaliza o cancelamento
+            time.sleep(5)
+            os._exit(0)
 
 def run_kafka_alert():
     """
@@ -447,10 +459,10 @@ if __name__ == "__main__":
     flask_thread.daemon = True
     flask_thread.start()
 
-    # Inicia a leitura de QR Code em um thread separado
-    qr_thread = Thread(target=read_qr_code)
-    qr_thread.daemon = True
-    qr_thread.start()
+    # # Inicia a leitura de QR Code em um thread separado
+    # qr_thread = Thread(target=read_qr_code)
+    # qr_thread.daemon = True
+    # qr_thread.start()
 
     # Inicia o Kafka em um thread separado para o tópico 'cancelar'
     kafka_cancel_thread = Thread(target=run_kafka_cancel)

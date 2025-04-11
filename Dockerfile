@@ -1,5 +1,5 @@
-# Use a imagem oficial do NVIDIA CUDA como base
-FROM nvidia/cuda:12.1.1-base-ubuntu22.04
+# Use a imagem oficial do NVIDIA CUDA 11.8 como base
+FROM nvidia/cuda:11.8.0-base-ubuntu22.04
 
 # Instala dependências do sistema
 RUN apt-get update && \
@@ -24,9 +24,10 @@ WORKDIR /app
 COPY requirements.txt .
 COPY api.py .
 
-# Instala o PyTorch com CUDA primeiro (versão compatível com seu driver)
-# Verifique a versão compatível em https://pytorch.org/get-started/locally/
-RUN pip install --no-cache-dir torch torchvision --extra-index-url https://download.pytorch.org/whl/cu121
+# Instala o PyTorch com CUDA 11.8 (versão compatível)
+RUN pip install --default-timeout=100 --retries=10 --no-cache-dir \
+    torch==2.0.1+cu118 torchvision==0.15.2+cu118 \
+    --extra-index-url https://download.pytorch.org/whl/cu118
 
 # Instala as demais dependências
 RUN pip install --no-cache-dir -r requirements.txt

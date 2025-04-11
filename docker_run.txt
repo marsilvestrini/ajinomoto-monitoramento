@@ -1,5 +1,6 @@
 docker run -dit --gpus all --restart unless-stopped --network=host -p 5000:5000 --name ajinomoto-dev -v $(pwd):/app ajinomoto-sv
 
+docker run -dit --gpus all --restart unless-stopped --network=host -p 5000:5000 --name ajinomoto-dev -v "%cd%":/app ajinomoto-sv
 
 No pc local:
 

@@ -102,7 +102,6 @@ class PalletTracker:
                     for box in result.boxes:
                         cls = int(box.cls[0].item())
                         x1, y1, x2, y2 = box.xyxy[0].tolist()
-                        print(1)
                         if (x1 >= roi_x1 and y1 >= roi_y1 and 
                             x2 <= roi_x2 and y2 <= roi_y2):
                             label = self.model.names[cls]

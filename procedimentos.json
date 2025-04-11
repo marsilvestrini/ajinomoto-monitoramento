@@ -147,26 +147,26 @@
 
   "timeouts": [
     {
-      "spectingStart": 240,
-      "spectingMacacao": 240,
+      "spectingStart": 120,
+      "spectingMacacao": 120,
       "spectingPalletColor": 240,
       "spectingPalletClass": 240,
       "spectingStrech": 240,
       "spectingPacotes": 480,
-      "spectingFinish" : 240
+      "spectingFinish" : 120
 
     }
   ],
 
   "required_times": [
     {
-      "spectingStrech": 20,
-      "spectingPacotes": 20,
-      "spectingStart": 20,
-      "spectingFinish": 20,
-      "spectingMacacao": 20,
-      "spectingPalletColor": 20,
-      "spectingPalletClass": 20
+      "spectingStrech": 25,
+      "spectingPacotes": 10,
+      "spectingStart": 5,
+      "spectingFinish": 5,
+      "spectingMacacao": 10,
+      "spectingPalletColor": 5,
+      "spectingPalletClass": 5
       
     }
   ]

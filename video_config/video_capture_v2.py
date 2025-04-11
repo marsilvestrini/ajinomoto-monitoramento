@@ -72,11 +72,12 @@ class VideoCapture:
         """
         Stop capturing frames and terminate the FFmpeg process.
         """
-        if self.process:
-            self.process.terminate()
-            self.process.wait()
-            self.process = None
-            print("FFmpeg process terminated.")
+        # if self.process:
+        self.process.terminate()
+
+        # self.process.wait()
+        self.process = None
+        print("[VideoCapture] FFmpeg process terminated.")
 
 
 def process_frame(frame):

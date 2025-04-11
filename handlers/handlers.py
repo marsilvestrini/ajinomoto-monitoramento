@@ -15,7 +15,7 @@ class AlertaHandler:
             print(f"Conectado a {self.DEVICE_IP}")
 
             start_time = time.time()
-            while (time.time() - start_time) < 10:  # Mantém ativado por 5 segundos
+            while (time.time() - start_time) < 2:  # Mantém ativado por 5 segundos
                 output_values = [1] * self.NUM_OUTPUTS
                 response = self.client.write_coils(self.OUTPUT_REGISTER_START, output_values)
 
@@ -32,7 +32,7 @@ class AlertaHandler:
             print("Falha na conexão com o dispositivo.")
 
     def deactivate_outputs(self):
-        """Desativa as saídas digitais e fecha a conexão."""
+        # """Desativa as saídas digitais e fecha a conexão."""
         output_values = [0] * self.NUM_OUTPUTS
         response = self.client.write_coils(self.OUTPUT_REGISTER_START, output_values)
         
@@ -40,5 +40,5 @@ class AlertaHandler:
             print("Erro ao desativar saídas!")
         else:
             print("Saídas desativadas.")
-
+        # print('k')
         self.client.close()

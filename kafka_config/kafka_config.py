@@ -1,9 +1,10 @@
 from kafka import KafkaProducer, KafkaConsumer
 import json
 import time
+import uuid
 
 class KafkaMessenger:
-    def __init__(self, topic, bootstrap_servers='localhost:9092'):
+    def __init__(self, topic, bootstrap_servers='kafka:9092'):
         self.producer = KafkaProducer(
             bootstrap_servers=bootstrap_servers,
             value_serializer=lambda v: json.dumps(v).encode('utf-8')  # Serializa o JSON
@@ -20,37 +21,44 @@ class KafkaMessenger:
         print(f"[KafkaMessenger] JSON enviado para o tópico '{self.topic}': {json_data}")
 
 class KafkaListener:
-    def __init__(self, topic, bootstrap_servers='localhost:9092'):
+    def __init__(self, topic, bootstrap_servers='kafka:9092'):
         self.consumer = KafkaConsumer(
             topic,
             bootstrap_servers=bootstrap_servers,
-            value_deserializer=lambda v: json.loads(v.decode('utf-8')),  # Desserializa o JSON
-            auto_offset_reset='earliest',  # Começa a ler desde o início do tópico (se não houver offset commit)
-            group_id='my-group',  # Define um grupo de consumidores
-            enable_auto_commit=False  # Desabilita o commit automático do offset
+            value_deserializer=lambda v: json.loads(v.decode('utf-8')),
+            auto_offset_reset='earliest',
+            group_id='my-group-procedimentos',  # Nome fixo para controle
+            enable_auto_commit=False,  # Commit manual habilitado
+            # session_timeout_ms=30000,
+            # heartbeat_interval_ms=10000,
+            # max_poll_interval_ms=300000,
+            max_poll_records=1  # Processa 1 mensagem por vez para commit preciso
         )
         self.topic = topic
-    
+        print(f"[KafkaListener] Iniciado (Tópico: {topic}, Grupo: {self.consumer.config['group_id']})")
+
     def listen(self):
-        """
-        Escuta mensagens no tópico Kafka e imprime o JSON recebido.
-        """
-        print(f"[KafkaListener] Aguardando mensagens no tópico '{self.topic}'...")
+        """Gera mensagens com commit manual após processamento bem-sucedido"""
         try:
             for message in self.consumer:
-                data = message.value
-                print(f"[KafkaListener] JSON recebido: {data}")
-                
-                # Retorna a mensagem para ser processada
-                yield data
-
-            # self.commit()
-
-        except Exception as e:
-            print(f"[KafkaListener] Erro ao processar mensagem: {e}")
+                try:
+                    data = message.value
+                    print(f"[KafkaListener] Nova mensagem [Offset: {message.offset}]")
+                    yield data
+                    
+                    # Commit explícito após processamento
+                    # self.consumer.commit()
+                    # print(f"[KafkaListener] Commit realizado para offset {message.offset}")
+                    
+                except Exception as e:
+                    print(f"[ERRO] Mensagem {message.offset} não processada: {str(e)}")
+                    continue
+                    
+        except KeyboardInterrupt:
+            print("\n[KafkaListener] Interrupção recebida")
         finally:
-            self.consumer.close()
-    
+            self.close()
+        
     def close(self):
         print(f"[KafkaListener] Closed Connection")
         self.consumer.close()
