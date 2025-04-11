@@ -79,34 +79,34 @@ class EtiquetaHandler:
     def set_quantidade_etiqueta_zero(cls):
         cls.quantidade_etiqueta = 0
 
-class VideoRecorder:
-    def __init__(self):
-        self.writer = None
-        self.recording = False
-        self.filename = None
-        self.frame_size = None
+# class VideoRecorder:
+#     def __init__(self):
+#         self.writer = None
+#         self.recording = False
+#         self.filename = None
+#         self.frame_size = None
     
-    def start_recording(self, procedure_name):
-        # Cria um nome de arquivo único baseado no timestamp e nome do procedimento
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        self.filename = f"recordings/{procedure_name}_{timestamp}.avi"
+#     def start_recording(self, procedure_name):
+#         # Cria um nome de arquivo único baseado no timestamp e nome do procedimento
+#         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+#         self.filename = f"recordings/{procedure_name}_{timestamp}.avi"
         
-        # Define o codec e cria o objeto VideoWriter
-        fourcc = cv2.VideoWriter_fourcc(*'XVID')
-        self.writer = cv2.VideoWriter(self.filename, fourcc, 20.0, self.frame_size)
-        self.recording = True
-        print(f"[VideoRecorder] Iniciando gravação em: {self.filename}")
+#         # Define o codec e cria o objeto VideoWriter
+#         fourcc = cv2.VideoWriter_fourcc(*'XVID')
+#         self.writer = cv2.VideoWriter(self.filename, fourcc, 20.0, self.frame_size)
+#         self.recording = True
+#         print(f"[VideoRecorder] Iniciando gravação em: {self.filename}")
     
-    def write_frame(self, frame):
-        if self.recording and self.writer is not None:
-            self.writer.write(frame)
+#     def write_frame(self, frame):
+#         if self.recording and self.writer is not None:
+#             self.writer.write(frame)
     
-    def stop_recording(self):
-        if self.recording and self.writer is not None:
-            self.writer.release()
-            self.recording = False
-            print(f"[VideoRecorder] Gravação finalizada: {self.filename}")
-            self.writer = None
+#     def stop_recording(self):
+#         if self.recording and self.writer is not None:
+#             self.writer.release()
+#             self.recording = False
+#             print(f"[VideoRecorder] Gravação finalizada: {self.filename}")
+#             self.writer = None
 
 class InspectProcedure:
     def __init__(self):
@@ -153,7 +153,7 @@ class InspectProcedure:
         self.video_capture = VideoCapture(self.video_path, self.frame_process)
         
         # Initialize VideoRecorder
-        self.video_recorder = VideoRecorder()
+        # self.video_recorder = VideoRecorder()
 
     def update_video_path(self):
         """
@@ -216,13 +216,13 @@ class InspectProcedure:
         # Processa o frame no tracker atual
         processed_frame = self.current_tracker.process_video(frame)
         
-        # Se for o primeiro frame, define o tamanho do frame para o VideoWriter
-        if self.video_recorder.frame_size is None:
-            height, width = processed_frame.shape[:2]
-            self.video_recorder.frame_size = (width, height)
+        # # Se for o primeiro frame, define o tamanho do frame para o VideoWriter
+        # if self.video_recorder.frame_size is None:
+        #     height, width = processed_frame.shape[:2]
+        #     self.video_recorder.frame_size = (width, height)
         
-        # Grava o frame processado
-        self.video_recorder.write_frame(processed_frame)
+        # # Grava o frame processado
+        # self.video_recorder.write_frame(processed_frame)
 
         # Adiciona o frame processado ao buffer
         with frame_lock:
@@ -292,7 +292,7 @@ class InspectProcedure:
             self.timestamp_inicio = datetime.now()
             
             # Inicia a gravação do vídeo
-            self.video_recorder.start_recording(procedure_name)
+            # self.video_recorder.start_recording(procedure_name)
 
             print(f"[InspectProcedure] iniciando: {self.current_tracker}")
             self.video_capture.start_capture()
@@ -337,7 +337,7 @@ class InspectProcedure:
         self.current_tracker = self.tracker_order[-1]
         self.current_tracker.isSpecting = False
         self.video_capture.stop_capture()
-        self.video_recorder.stop_recording()
+        # self.video_recorder.stop_recording()
         print("[InspectProcedure] Procedimento cancelado.")
         # run_kafka()
         os._exit(0)
@@ -471,8 +471,8 @@ if __name__ == "__main__":
     kafka_cancel_thread.daemon = True
     kafka_cancel_thread.start()
 
-    kafka_alert_thread = Thread(target=run_kafka_alert)
-    kafka_alert_thread.daemon = True
-    kafka_alert_thread.start()
+    #kafka_alert_thread = Thread(target=run_kafka_alert)
+    #kafka_alert_thread.daemon = True
+    #kafka_alert_thread.start()
     
     run_kafka()
