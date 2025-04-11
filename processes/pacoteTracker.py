@@ -52,8 +52,10 @@ class PacoteTracker:
 
         self.required_time = self.dados['required_times'][0]['spectingPacotes']-1
     
-        if 'feirinha' in procedure_name:
+        if not 'feirinha' in procedure_name:
             self.max_etiqueta_gap = 20
+
+        print(f'[PacoteTracker] Tempo para emissão de alerta de etiqueta: {self.max_etiqueta_gap}')
 
     def is_inside_roi(self, box, roi):
         x1, y1, x2, y2 = box

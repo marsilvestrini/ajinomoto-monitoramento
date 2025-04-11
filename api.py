@@ -140,7 +140,7 @@ class InspectProcedure:
         self.macacaoTracker = MacacaoTracker(self.model_rede3, self.expected_macacao_color)
 
         self.startTracker = StartTracker(self.model_rede1)
-        self.pacoteTracker = PacoteTracker(self.model_rede1, None)
+        self.pacoteTracker = PacoteTracker(self.model_rede1, 'feirinha')
         self.stretchTracker = StretchTracker(self.model_rede4)
         self.finishTracker = FinishTracker(self.model_rede1)
         

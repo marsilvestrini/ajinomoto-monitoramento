@@ -4,3 +4,4 @@
 /ffmpeg 
 /recordings
 /**/__pycache__/
+/**/**/kafka-data
