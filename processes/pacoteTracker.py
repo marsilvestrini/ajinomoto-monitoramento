@@ -11,7 +11,7 @@ import json
 load_dotenv()
 
 class PacoteTracker:
-    def __init__(self, model_path):
+    def __init__(self, model_path, procedure_name):
         # Check if CUDA is available
         self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
         print(f"[PacoteTracker] Using device: {self.device}")
@@ -51,6 +51,9 @@ class PacoteTracker:
             self.dados = json.load(arquivo)
 
         self.required_time = self.dados['required_times'][0]['spectingPacotes']-1
+    
+        if 'feirinha' in procedure_name:
+            self.max_etiqueta_gap = 20
 
     def is_inside_roi(self, box, roi):
         x1, y1, x2, y2 = box

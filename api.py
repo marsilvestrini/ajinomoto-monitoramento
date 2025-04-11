@@ -126,20 +126,6 @@ class InspectProcedure:
         self.expected_pallet_class = None
         self.expected_macacao_color = None
 
-        # Initialize trackers
-        self.palletTracker = PalletTracker(self.model_rede2, self.expected_color, self.expected_pallet_class)
-        self.macacaoTracker = MacacaoTracker(self.model_rede3, self.expected_macacao_color)
-
-        self.startTracker = StartTracker(self.model_rede1)
-        self.pacoteTracker = PacoteTracker(self.model_rede1)
-        self.stretchTracker = StretchTracker(self.model_rede4)
-        self.finishTracker = FinishTracker(self.model_rede1)
-        
-        self.tracker_order = [self.startTracker, self.macacaoTracker, self.palletTracker, self.pacoteTracker, self.stretchTracker, self.finishTracker]
-        self.tracker_index = 0
-
-        self.current_tracker = self.tracker_order[0]  # Começa com o PalletTracker
-
         # Definições db
         self.alerta_total = ""
         self.obs = ""
@@ -148,6 +134,20 @@ class InspectProcedure:
         # Timestamps
         self.timestamp_inicio = None
         self.timestamp_fim = None
+
+        # Initialize trackers
+        self.palletTracker = PalletTracker(self.model_rede2, self.expected_color, self.expected_pallet_class)
+        self.macacaoTracker = MacacaoTracker(self.model_rede3, self.expected_macacao_color)
+
+        self.startTracker = StartTracker(self.model_rede1)
+        self.pacoteTracker = PacoteTracker(self.model_rede1, None)
+        self.stretchTracker = StretchTracker(self.model_rede4)
+        self.finishTracker = FinishTracker(self.model_rede1)
+        
+        self.tracker_order = [self.startTracker, self.macacaoTracker, self.palletTracker, self.pacoteTracker, self.stretchTracker, self.finishTracker]
+        self.tracker_index = 0
+
+        self.current_tracker = self.tracker_order[0]  # Começa com o PalletTracker
 
         # Initialize VideoCapture with a callback to process frames
         self.video_capture = VideoCapture(self.video_path, self.frame_process)
@@ -279,9 +279,11 @@ class InspectProcedure:
             # Atualiza o PalletTracker com os novos valores
             self.macacaoTracker = MacacaoTracker(self.model_rede3, self.expected_macacao_color) 
             self.palletTracker = PalletTracker(self.model_rede2, self.expected_color, self.expected_pallet_class)
-            
+            self.pacoteTracker =  PacoteTracker(self.model_rede1, procedure_name)
+
             self.tracker_order[1] = self.macacaoTracker
             self.tracker_order[2] = self.palletTracker
+            self.tracker_order[3] = self.pacoteTracker
             self.current_tracker = self.tracker_order[0]  # Define o current_tracker
 
             print("[InspectProcedure] Ordem:", self.tracker_order)
