@@ -54,6 +54,9 @@ class PacoteTracker:
     
         if not 'feirinha' in procedure_name:
             self.max_etiqueta_gap = 20
+        
+        self.max_etiqueta_gap = 1
+
 
         print(f'[PacoteTracker] Tempo para emissão de alerta de etiqueta: {self.max_etiqueta_gap}')
 
@@ -134,10 +137,22 @@ class PacoteTracker:
                         if not state['alert_sent']:
                             self.send_etiqueta_alert(pacote_id, time_without_etiqueta)
                             state['alert_sent'] = True
+        if len(self.pacote_states) > 50:  # Limite máximo de pacotes rastreados
+            # Remove os mais antigos primeiro
+            oldest_ids = sorted(self.pacote_states.keys(), 
+                            key=lambda x: self.pacote_states[x]['last_seen'])[:10]
+            for old_id in oldest_ids:
+                del self.pacote_states[old_id]
 
 
     def send_etiqueta_alert(self, pacote_id, time_without):
-        """Envia alerta sobre pacote sem etiqueta"""
+        """Envia alerta sobre pacote sem etiqueta com throttling"""
+        if not hasattr(self, '_last_alert_time'):
+            self._last_alert_time = 0
+        now = time.time()
+        if now - self._last_alert_time < 2.0:  # Não envia mais de 1 alerta a cada 2 segundos
+            return
+        self._last_alert_time = now
         alert_msg = {
             "alerta": True,
             "tipo": "sem_etiqueta",
@@ -244,7 +259,7 @@ class PacoteTracker:
             #Lógica de desaparecimento de pacote
             for pid, state in self.pacote_states.items():
                 # Verifica se o pacote desapareceu
-                if state['in_descarga']:
+                # if state['in_descarga']:
                     if now - state['last_seen'] > 1.0 and not state['disappeared']:  # 1 segundo sem ser visto
                         state['disappeared'] = True
                         state['disappeared_time'] = now
@@ -325,6 +340,11 @@ class PacoteTracker:
             cv2.putText(frame, "ROI Descarga", (roi_x, roi_y-10), 
                       cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
             
+            print(f"[DEBUG] Pacotes ativos: {len(self.pacote_states)}, Memória GPU: {torch.cuda.memory_allocated()/1e6:.2f}MB" if self.device == 'cuda' else "")
+            
+            if self.device == 'cuda':
+                del frame_tensor
+                torch.cuda.empty_cache()
             return frame
         except Exception as e:
             print(f"[PacoteTracker] Error processing frame: {e}")

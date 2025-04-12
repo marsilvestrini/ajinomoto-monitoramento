@@ -9,7 +9,6 @@ from processes.startTracker import StartTracker
 from processes.macacaoTracker import MacacaoTracker
 from processes.finishTracker import FinishTracker
 from pg_config.pg_config import ProcedimentoManager
-from handlers.handlers import AlertaHandler
 from datetime import datetime
 from video_config.video_capture_v2 import VideoCapture
 from dotenv import load_dotenv
@@ -159,7 +158,6 @@ class InspectProcedure:
         """
         Update the video path based on the current tracker.
         """
-        print('a')
         tracker_name = self.current_tracker.__class__.__name__
         if tracker_name == "StartTracker":
             self.video_path = os.getenv('VIDEO_PATH_START')
