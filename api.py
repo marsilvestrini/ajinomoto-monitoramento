@@ -404,22 +404,17 @@ def run_kafka_cancel():
             time.sleep(5)
             os._exit(0)
 
-def read_qr_code():
+def run_etiquetas_listener():
     """
-    Função para ler QR Codes da porta serial e atualizar o valor da etiqueta.
+    Função para ler o topico de etiquetas
     """
-    ser = serial.Serial(port='COM3', baudrate=9600, timeout=1)  # Ajuste a porta e baudrate conforme necessário
-    print("Aguardando leitura do QR Code...")
-    messenger_etiquetas = KafkaMessenger(topic='etiquetas')
-    try:
-        while True:
-            qr_code = ser.readline().decode('utf-8').strip()  # Lê e decodifica a entrada serial
-            if qr_code:
-                # Atualiza o valor da etiqueta na instância de InspectProcedurex'
-                print(f"QR CODE: {qr_code}")
+    kafka_etiquetas_listener = KafkaListener(topic='labels')
+    for message in kafka_etiquetas_listener.listen():
+        if isinstance(message, dict):
+            qr_code = message.get('etiqueta')
+                if qr_code:
+                print(f"[MAIN] QR CODE LIDO: {qr_code}")
                 EtiquetaHandler.set_valor_etiqueta(qr_code)
-                json_to_send = {"etiqueta": EtiquetaHandler.get_valor_etiqueta()}
-                messenger_etiquetas.send_message(json_to_send)
                 EtiquetaHandler.set_quantidade_etiqueta(1)
                 print(f"[ReadQRcode] QR Code lido: {EtiquetaHandler.get_valor_etiqueta()}")
                 print(f"[ReadQRcode] Número de QR Code lidos: {EtiquetaHandler.get_quantidade_etiqueta()}")
