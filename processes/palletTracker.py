@@ -82,11 +82,11 @@ class PalletTracker:
 
             frame = cv2.resize(frame, (640, 640))
             
-            if self.device == 'cuda':
-                frame_tensor = torch.from_numpy(frame).to(self.device).float() / 255.0
-                frame_tensor = frame_tensor.permute(2, 0, 1).unsqueeze(0)
-            else:
-                frame_tensor = frame
+            # if self.device == 'cuda':
+            #     frame_tensor = torch.from_numpy(frame).to(self.device).float() / 255.0
+            #     frame_tensor = frame_tensor.permute(2, 0, 1).unsqueeze(0)
+            # else:
+            frame_tensor = frame
 
             output_frame = frame.copy()
             roi_x1, roi_y1 = self.roi_plastic[0], self.roi_plastic[1]

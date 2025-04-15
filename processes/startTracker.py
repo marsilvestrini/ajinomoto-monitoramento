@@ -34,7 +34,7 @@ class StartTracker:
         self.required_time = self.dados['required_times'][0]['spectingStart']-1  # Segundos necessários sem detecção para confirmar remoção
         
         # Definir a ROI (x, y, width, height)
-        self.roi_x, self.roi_y, self.roi_width, self.roi_height = 375, 176, 185, 320
+        self.roi_x, self.roi_y, self.roi_width, self.roi_height = 375, 176, 205, 319
 
     def process_video(self, frame):
         try:
@@ -44,11 +44,11 @@ class StartTracker:
             frame = cv2.resize(frame, (640, 640))
             
             # Move the frame to the same device as the model (if using CUDA)
-            if self.device == 'cuda':
-                frame_tensor = torch.from_numpy(frame).to(self.device).float() / 255.0
-                frame_tensor = frame_tensor.permute(2, 0, 1).unsqueeze(0)
-            else:
-                frame_tensor = frame
+            # if self.device == 'cuda':
+            #     frame_tensor = torch.from_numpy(frame).to(self.device).float() / 255.0
+            #     frame_tensor = frame_tensor.permute(2, 0, 1).unsqueeze(0)
+            # else:
+            frame_tensor = frame
 
             # Perform inference
             results = self.model(frame_tensor, verbose=False)
@@ -73,7 +73,7 @@ class StartTracker:
                     # if (x1 >= roi_x1 and y1 >= roi_y1 and 
                     #     x2 <= roi_x2 and y2 <= roi_y2 and label == 'pallet' and conf >= 0.65):
                     if (x1 >= roi_x1 and y1 >= roi_y1 and 
-                        x2 <= roi_x2 and y2 <= roi_y2):
+                        x2 <= roi_x2 and y2 <= roi_y2 and not 'pessoa' in label):
                         detected = True
                         filtered_boxes.append([x1, y1, x2, y2])
                         filtered_cls.append(cls)
@@ -123,7 +123,7 @@ class StartTracker:
             
             # Desenhar a ROI para referência (vermelho)
             cv2.rectangle(output_frame, (roi_x1, roi_y1), (roi_x2, roi_y2), (0, 0, 255), 2)
-            # cv2.putText(output_frame, "ROI", (roi_x1, roi_y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
+            cv2.putText(output_frame, "ROI Carga", (roi_x1, roi_y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
 
             return output_frame
         except Exception as e:

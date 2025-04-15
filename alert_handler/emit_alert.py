@@ -15,7 +15,7 @@ def run_kafka_alert():
         if isinstance(message, dict):
             alert_value = message.get('alerta')
             if alert_value:
-                print(f"[Main] Alerta recebido: {alert_value}")
+                print(f"[Main] Alerta recebido: {message}")
                 alerta_hander.activate_outputs()
                 kafka_listener.commit()
             else:

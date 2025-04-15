@@ -412,15 +412,12 @@ def run_etiquetas_listener():
     for message in kafka_etiquetas_listener.listen():
         if isinstance(message, dict):
             qr_code = message.get('etiqueta')
-                if qr_code:
+            if qr_code:
                 print(f"[MAIN] QR CODE LIDO: {qr_code}")
                 EtiquetaHandler.set_valor_etiqueta(qr_code)
                 EtiquetaHandler.set_quantidade_etiqueta(1)
                 print(f"[ReadQRcode] QR Code lido: {EtiquetaHandler.get_valor_etiqueta()}")
                 print(f"[ReadQRcode] Número de QR Code lidos: {EtiquetaHandler.get_quantidade_etiqueta()}")
-    except KeyboardInterrupt:
-        print("Encerrando leitura de QR Code...")
-        ser.close()
 
 if __name__ == "__main__":
     # Cria a pasta recordings se não existir
@@ -432,8 +429,8 @@ if __name__ == "__main__":
     flask_thread.daemon = True
     flask_thread.start()
 
-    # # Inicia a leitura de QR Code em um thread separado
-    # qr_thread = Thread(target=read_qr_code)
+    # Inicia a leitura de QR Code em um thread separado
+    # qr_thread = Thread(target=run_etiquetas_listener)
     # qr_thread.daemon = True
     # qr_thread.start()
 

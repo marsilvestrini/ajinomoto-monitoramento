@@ -47,11 +47,11 @@ class FinishTracker:
             frame = cv2.resize(frame, (640, 640))
             
             # Move the frame to the same device as the model (if using CUDA)
-            if self.device == 'cuda':
-                frame_tensor = torch.from_numpy(frame).to(self.device).float() / 255.0
-                frame_tensor = frame_tensor.permute(2, 0, 1).unsqueeze(0)
-            else:
-                frame_tensor = frame
+            # if self.device == 'cuda':
+            #     frame_tensor = torch.from_numpy(frame).to(self.device).float() / 255.0
+            #     frame_tensor = frame_tensor.permute(2, 0, 1).unsqueeze(0)
+            # else:
+            frame_tensor = frame
 
             # Perform inference
             results = self.model(frame_tensor, verbose=False)

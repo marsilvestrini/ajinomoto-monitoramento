@@ -67,7 +67,7 @@
       "db_command_alertas": "self.startTracker.alertPassoStart + self.palletTracker.alertPassoCollor + self.palletTracker.alertPassoClassePallet + self.pacoteTracker.alertPassoProduto + self.stretchTracker.alertPassoStretch + self.finishTracker.alertPassoFinish"
     },
     {
-      "nome": "palett_fechado_alergênico_critico",
+      "nome": "palett_fechado_alergenico_critico",
       "info": [
         {"expected_macacao_color": "macacao_azul"},
         {"expected_pallet_color": "laranja"},
@@ -111,7 +111,7 @@
       "db_command_alertas": "self.startTracker.alertPassoStart + self.palletTracker.alertPassoCollor + self.pacoteTracker.alertPassoProduto + self.stretchTracker.alertPassoStretch + self.finishTracker.alertPassoFinish"
     },
     {
-      "nome": "pallet_fechado_mole",
+      "nome": "palete_fechado_mole",
       "info": [
         {"expected_macacao_color": "macacao_branco"},
         {"expected_pallet_color": "branco"},
@@ -147,13 +147,13 @@
 
   "timeouts": [
     {
-      "spectingStart": 120,
-      "spectingMacacao": 120,
-      "spectingPalletColor": 240,
-      "spectingPalletClass": 240,
-      "spectingStrech": 240,
-      "spectingPacotes": 480,
-      "spectingFinish" : 120
+      "spectingStart": 60,
+      "spectingMacacao": 60,
+      "spectingPalletColor": 60,
+      "spectingPalletClass": 40,
+      "spectingStrech": 180,
+      "spectingPacotes": 600,
+      "spectingFinish" : 180
 
     }
   ],
@@ -161,7 +161,7 @@
   "required_times": [
     {
       "spectingStrech": 25,
-      "spectingPacotes": 10,
+      "spectingPacotes": 15, 
       "spectingStart": 5,
       "spectingFinish": 5,
       "spectingMacacao": 10,

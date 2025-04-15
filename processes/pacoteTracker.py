@@ -55,9 +55,6 @@ class PacoteTracker:
         if not 'feirinha' in procedure_name:
             self.max_etiqueta_gap = 20
         
-        self.max_etiqueta_gap = 1
-
-
         print(f'[PacoteTracker] Tempo para emissão de alerta de etiqueta: {self.max_etiqueta_gap}')
 
     def is_inside_roi(self, box, roi):
@@ -209,11 +206,11 @@ class PacoteTracker:
                 self.messenger_alertas.send_message(json_alert)               
 
             # Move the frame to the same device as the model
-            if self.device == 'cuda':
-                frame_tensor = torch.from_numpy(frame).to(self.device).float() / 255.0
-                frame_tensor = frame_tensor.permute(2, 0, 1).unsqueeze(0)
-            else:
-                frame_tensor = frame
+            # if self.device == 'cuda':
+            #     frame_tensor = torch.from_numpy(frame).to(self.device).float() / 255.0
+            #     frame_tensor = frame_tensor.permute(2, 0, 1).unsqueeze(0)
+            # else:
+            frame_tensor = frame
 
             # Perform inference
             results = self.model(frame_tensor, verbose=False)
@@ -340,7 +337,7 @@ class PacoteTracker:
             cv2.putText(frame, "ROI Descarga", (roi_x, roi_y-10), 
                       cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
             
-            print(f"[DEBUG] Pacotes ativos: {len(self.pacote_states)}, Memória GPU: {torch.cuda.memory_allocated()/1e6:.2f}MB" if self.device == 'cuda' else "")
+            # print(f"[DEBUG] Pacotes ativos: {len(self.pacote_states)}, Memória GPU: {torch.cuda.memory_allocated()/1e6:.2f}MB" if self.device == 'cuda' else "")
             
             if self.device == 'cuda':
                 del frame_tensor
