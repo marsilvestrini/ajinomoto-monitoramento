@@ -40,7 +40,7 @@ class PacoteTracker:
                                # 'color': tuple, 'last_center': tuple, 'last_etiqueta_time': timestamp, 
                                # 'alert_sent': bool, 'in_descarga': bool}}
         self.next_pacote_id = 0
-        self.max_etiqueta_gap = 8.0  # Tempo máximo sem etiqueta (8 segundos)
+        self.max_etiqueta_gap = 11.0  # Tempo máximo sem etiqueta (8 segundos)
         self.min_etiqueta_conf = 0  # Confiança mínima para considerar etiqueta válida
         self.max_pacote_age = 5.0  # Tempo máximo sem ver um pacote antes de removê-lo
         self.max_pacote_lifetime_without_etiqueta = 10.0  # Tempo máximo de vida sem etiqueta antes de alertar
@@ -53,7 +53,7 @@ class PacoteTracker:
         self.required_time = self.dados['required_times'][0]['spectingPacotes']-1
     
         if not 'feirinha' in procedure_name:
-            self.max_etiqueta_gap = 20
+            self.max_etiqueta_gap = 23
         
         print(f'[PacoteTracker] Tempo para emissão de alerta de etiqueta: {self.max_etiqueta_gap}')
 
@@ -337,11 +337,12 @@ class PacoteTracker:
             cv2.putText(frame, "ROI Descarga", (roi_x, roi_y-10), 
                       cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
             
-            # print(f"[DEBUG] Pacotes ativos: {len(self.pacote_states)}, Memória GPU: {torch.cuda.memory_allocated()/1e6:.2f}MB" if self.device == 'cuda' else "")
+            print(f"[DEBUG] Pacotes ativos: {len(self.pacote_states)}, Memória GPU: {torch.cuda.memory_allocated()/1e6:.2f}MB" if self.device == 'cuda' else "")
             
             if self.device == 'cuda':
                 del frame_tensor
                 torch.cuda.empty_cache()
+                
             return frame
         except Exception as e:
             print(f"[PacoteTracker] Error processing frame: {e}")

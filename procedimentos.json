@@ -147,10 +147,10 @@
 
   "timeouts": [
     {
-      "spectingStart": 60,
-      "spectingMacacao": 60,
-      "spectingPalletColor": 60,
-      "spectingPalletClass": 40,
+      "spectingStart": 100,
+      "spectingMacacao": 100,
+      "spectingPalletColor": 120,
+      "spectingPalletClass": 120,
       "spectingStrech": 180,
       "spectingPacotes": 600,
       "spectingFinish" : 180

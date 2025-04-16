@@ -107,7 +107,7 @@ class VideoCapture:
                 self.last_frame_time = time.time()
                 try:
                     self.frame_queue.put(frame, timeout=0.1)
-                    # print(f"[Frame Captured] Queue: {self.frame_queue.qsize()}\n")
+                    print(f"[Frame Captured] Queue: {self.frame_queue.qsize()}\n")
                 except queue.Full:
                     print("[WARN] Frame queue full - dropping frame")
                     continue

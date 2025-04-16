@@ -36,7 +36,7 @@ class FinishTracker:
         self.required_time = self.dados['required_times'][0]['spectingFinish']-1  # Segundos necessários sem detecção para confirmar remoção
         
         # Definir a ROI (x, y, width, height)
-        self.roi_x, self.roi_y, self.roi_width, self.roi_height = 197, 177, 181, 313
+        self.roi_x, self.roi_y, self.roi_width, self.roi_height = 177, 176, 201, 319
 
     def process_video(self, frame):
         try:

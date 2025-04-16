@@ -34,7 +34,9 @@ class PalletTracker:
             "amarelo": (10, 200, 220),
             "azul": (255, 0, 0),
             "branco": (200, 205, 200),
-            "vazio": (146, 155, 153)
+            "vazio": (146, 155, 153),
+            "amarelo_coberto": (114, 221, 240),
+            "verde_polpa": (114, 121, 217)
         }
         
         # self.roi_color = [215, 161, 120, 246]  # ROI para verificação de cor
@@ -201,13 +203,23 @@ class PalletTracker:
                             if (x1 >= roi_x1 and y1 >= roi_y1 and 
                                 x2 <= roi_x2 and y2 <= roi_y2):
                                 label = self.model.names[cls]
-                                if label == self.expected_pallet_class:
+                                if label == self.expected_pallet_class: 
                                     detected_in_roi = True
+                                
                                     # Desenha apenas detecções dentro da ROI
-                                    color = (0, 255, 0)  # Verde
-                                    cv2.rectangle(output_frame, (int(x1), int(y1)), (int(x2), int(y2)), color, 2)
-                                    cv2.putText(output_frame, label, (int(x1), int(y1)-10), 
-                                                cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
+                                color = (0, 255, 0)  # Verde
+                                cv2.rectangle(output_frame, (int(x1), int(y1)), (int(x2), int(y2)), color, 2)
+                                cv2.putText(output_frame, label, (int(x1), int(y1)-10), 
+                                            cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 2)
+
+                    dominant_color = self.get_dominant_color(frame, self.roi_color)   
+                    cv2.putText(output_frame, f"cor identificada: {dominant_color}", (15, 15), 
+                                        cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 2)
+                    if dominant_color == 'amarelo_coberto':
+                        detected_in_roi = True
+                        print("[PalletTracker] (DEBUG) Detectado pela cor de pallet coberto coberta")     
+
+                                    
 
                     if detected_in_roi:
                         elapsed_time = time.time() - self.start_time
