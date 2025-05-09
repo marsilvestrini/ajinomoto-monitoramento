@@ -3,5 +3,6 @@
 /input
 /ffmpeg 
 /recordings
-/**/__pycache__/
-/**/**/kafka-data
+# Ignorar arquivos compilados pelo Python
+__pycache__/
+*.py[cod]
