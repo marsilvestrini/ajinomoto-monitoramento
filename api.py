@@ -207,6 +207,7 @@ class InspectProcedure:
                 print("[InspectProcedure] Todos os trackers finalizados.")
                 self.timestamp_fim = datetime.now()  # Captura o timestamp de fim
                 self.save_on_db()
+                time.sleep(3)
                 # run_kafka()
                 os._exit(0)
                 

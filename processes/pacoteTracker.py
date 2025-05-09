@@ -53,7 +53,7 @@ class PacoteTracker:
         self.required_time = self.dados['required_times'][0]['spectingPacotes']-1
     
         if not 'feirinha' in procedure_name:
-            self.max_etiqueta_gap = 23
+            self.max_etiqueta_gap = 32
         
         print(f'[PacoteTracker] Tempo para emissão de alerta de etiqueta: {self.max_etiqueta_gap}')
 
