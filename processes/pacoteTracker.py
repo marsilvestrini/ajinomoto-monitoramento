@@ -35,6 +35,8 @@ class PacoteTracker:
         self.alertPassoProduto = ''
         self.min_confidence = 0.55
 
+        self.n_alarmes = 0
+
         # Configurações para rastreamento de etiquetas
         self.pacote_states = {}  # {id: {'first_seen': timestamp, 'last_seen': timestamp, 'has_etiqueta': bool, 
                                # 'color': tuple, 'last_center': tuple, 'last_etiqueta_time': timestamp, 
@@ -165,6 +167,7 @@ class PacoteTracker:
             "timestamp": time.time()
         }
         self.messenger_alertas.send_message(alert_msg)
+        self.n_alarmes+=1
         print(f"[ALERTA] Pacote {pacote_id} sem etiqueta por {time_without:.1f} segundos")
 
     def send_disappeared_alert(self, pacote_id, lifetime):

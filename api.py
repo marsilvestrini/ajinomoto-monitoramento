@@ -318,6 +318,7 @@ class InspectProcedure:
             "etapa_5": db_command_etapas[4],
             "etapa_6": db_command_etapas[5],
             "etapa_7": db_command_etapas[6],
+            "n_alarmes": self.pacoteTracker.n_alarmes,
             "observacoes": f"{self.obs}",
             "id_procedimento": f"{self.current_procedure}"
         }
