@@ -40,10 +40,11 @@ class PacoteTracker:
                                # 'color': tuple, 'last_center': tuple, 'last_etiqueta_time': timestamp, 
                                # 'alert_sent': bool, 'in_descarga': bool}}
         self.next_pacote_id = 0
-        self.max_etiqueta_gap = 11.0  # Tempo máximo sem etiqueta (8 segundos)
+        self.max_etiqueta_gap = 12.0  # Tempo máximo sem etiqueta (8 segundos)
         self.min_etiqueta_conf = 0  # Confiança mínima para considerar etiqueta válida
-        self.max_pacote_age = 5.0  # Tempo máximo sem ver um pacote antes de removê-lo
+        self.max_pacote_age = 10.0  # Tempo máximo sem ver um pacote antes de removê-lo
         self.max_pacote_lifetime_without_etiqueta = 10.0  # Tempo máximo de vida sem etiqueta antes de alertar
+        self.ALERT_INTERVAL = 5
 
         self.messenger_alertas = KafkaMessenger(topic='alertas')
 
@@ -53,7 +54,7 @@ class PacoteTracker:
         self.required_time = self.dados['required_times'][0]['spectingPacotes']-1
     
         if not 'feirinha' in procedure_name:
-            self.max_etiqueta_gap = 32
+            self.max_etiqueta_gap = 32.0
         
         print(f'[PacoteTracker] Tempo para emissão de alerta de etiqueta: {self.max_etiqueta_gap}')
 
@@ -99,7 +100,8 @@ class PacoteTracker:
                 'alert_sent': False,
                 'in_descarga': in_descarga,
                 'disappeared': False,
-                'disappeared_time': None
+                'disappeared_time': None,
+                'last_alert_time': None
             }
         else:
             state = self.pacote_states[pacote_id]
@@ -129,11 +131,16 @@ class PacoteTracker:
                     if time_without_etiqueta > self.max_etiqueta_gap:
                         state['has_etiqueta'] = False
                         state['color'] = (0, 0, 255)  # Vermelho
+
+                        if state['last_alert_time'] is None:
+                            state['last_alert_time'] = now 
                         
                         # Envia alerta se ainda não foi enviado
-                        if not state['alert_sent']:
+                        if not state['alert_sent'] or (now - state['last_alert_time']) > self.ALERT_INTERVAL:
                             self.send_etiqueta_alert(pacote_id, time_without_etiqueta)
                             state['alert_sent'] = True
+                            state['last_alert_time'] = now
+
         if len(self.pacote_states) > 50:  # Limite máximo de pacotes rastreados
             # Remove os mais antigos primeiro
             oldest_ids = sorted(self.pacote_states.keys(), 

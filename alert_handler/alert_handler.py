@@ -15,7 +15,7 @@ class AlertaHandler:
             print(f"Conectado a {self.DEVICE_IP}")
 
             start_time = time.time()
-            while (time.time() - start_time) < 2:  # Mantém ativado por 5 segundos
+            while (time.time() - start_time) < 5:  # Mantém ativado por 5 segundos
                 output_values = [1] * self.NUM_OUTPUTS
                 response = self.client.write_coils(self.OUTPUT_REGISTER_START, output_values)
 
