@@ -8,6 +8,8 @@ from processes.stretchTracker import StretchTracker
 from processes.startTracker import StartTracker
 from processes.macacaoTracker import MacacaoTracker
 from processes.finishTracker import FinishTracker
+from processes.labelPolpaTracker import LabelPolpaTracker
+from processes.pacotePolpaTracker import PacotePolpaTracker
 from pg_config.pg_config import ProcedimentoManager
 from datetime import datetime
 from video_config.video_capture_v2 import VideoCapture
@@ -78,35 +80,6 @@ class EtiquetaHandler:
     def set_quantidade_etiqueta_zero(cls):
         cls.quantidade_etiqueta = 0
 
-# class VideoRecorder:
-#     def __init__(self):
-#         self.writer = None
-#         self.recording = False
-#         self.filename = None
-#         self.frame_size = None
-    
-#     def start_recording(self, procedure_name):
-#         # Cria um nome de arquivo único baseado no timestamp e nome do procedimento
-#         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-#         self.filename = f"recordings/{procedure_name}_{timestamp}.avi"
-        
-#         # Define o codec e cria o objeto VideoWriter
-#         fourcc = cv2.VideoWriter_fourcc(*'XVID')
-#         self.writer = cv2.VideoWriter(self.filename, fourcc, 20.0, self.frame_size)
-#         self.recording = True
-#         print(f"[VideoRecorder] Iniciando gravação em: {self.filename}")
-    
-#     def write_frame(self, frame):
-#         if self.recording and self.writer is not None:
-#             self.writer.write(frame)
-    
-#     def stop_recording(self):
-#         if self.recording and self.writer is not None:
-#             self.writer.release()
-#             self.recording = False
-#             print(f"[VideoRecorder] Gravação finalizada: {self.filename}")
-#             self.writer = None
-
 class InspectProcedure:
     def __init__(self):
         self.video_path = os.getenv('VIDEO_PATH_START')
@@ -120,6 +93,7 @@ class InspectProcedure:
         self.model_rede3 = os.getenv('MODEL_REDE3')
         self.model_rede4 = os.getenv('MODEL_REDE4')
         self.model_rede5 = os.getenv('MODEL_REDE5')
+        self.model_rede6 = os.getenv('MODEL_REDE6')
 
         self.expected_color = None
         self.expected_pallet_class = None
@@ -137,12 +111,12 @@ class InspectProcedure:
         # Initialize trackers
         self.palletTracker = PalletTracker(self.model_rede2, self.expected_color, self.expected_pallet_class)
         self.macacaoTracker = MacacaoTracker(self.model_rede3, self.expected_macacao_color)
-
+        self.pacotePolpaTracker = PacotePolpaTracker(self.model_rede1)
         self.startTracker = StartTracker(self.model_rede1)
         self.pacoteTracker = PacoteTracker(self.model_rede1, 'feirinha')
         self.stretchTracker = StretchTracker(self.model_rede4)
         self.finishTracker = FinishTracker(self.model_rede1)
-        
+        self.labelPolpaTracker = LabelPolpaTracker(self.model_rede6)
         self.tracker_order = [self.startTracker, self.macacaoTracker, self.palletTracker, self.pacoteTracker, self.stretchTracker, self.finishTracker]
         self.tracker_index = 0
 
@@ -173,6 +147,10 @@ class InspectProcedure:
             self.video_path = os.getenv('VIDEO_PATH_STRETCH')
         elif tracker_name =='FinishTracker':
             self.video_path = os.getenv('VIDEO_PATH_FINISH')
+        elif tracker_name=="LabelPolpaTracker":
+            self.video_path = os.getenv('VIDEO_PATH_LABEL')
+        elif tracker_name=="PacotePolpaTracker":
+            self.video_path = os.getenv('VIDEO_PATH_PACOTE_POLPA')
         else:
             self.video_path = os.getenv('VIDEO_PATH_DEFAULT')
         
@@ -277,12 +255,16 @@ class InspectProcedure:
 
             # Atualiza o PalletTracker com os novos valores
             self.macacaoTracker = MacacaoTracker(self.model_rede3, self.expected_macacao_color) 
-            self.palletTracker = PalletTracker(self.model_rede2, self.expected_color, self.expected_pallet_class)
-            self.pacoteTracker =  PacoteTracker(self.model_rede1, procedure_name)
-
             self.tracker_order[1] = self.macacaoTracker
+            self.palletTracker = PalletTracker(self.model_rede2, self.expected_color, self.expected_pallet_class)
             self.tracker_order[2] = self.palletTracker
-            self.tracker_order[3] = self.pacoteTracker
+            if "polpa" in procedure_name:
+                self.tracker_order[3] = self.pacotePolpaTracker
+            else:
+                self.pacoteTracker =  PacoteTracker(self.model_rede1, procedure_name)
+                self.tracker_order[3] = self.pacoteTracker
+
+
             self.current_tracker = self.tracker_order[0]  # Define o current_tracker
 
             print("[InspectProcedure] Ordem:", self.tracker_order)

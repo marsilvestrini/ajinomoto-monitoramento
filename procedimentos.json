@@ -133,6 +133,17 @@
       "db_command_alertas": "self.startTracker.alertPassoStart + self.palletTracker.alertPassoCollor + self.pacoteTracker.alertPassoProduto + self.stretchTracker.alertPassoStretch + self.finishTracker.alertPassoFinish"
     },
     {
+    "nome": "polpa",
+      "info": [
+        {"expected_macacao_color": "macacao_branco"},
+        {"expected_pallet_color": "verde_polpa"},
+        {"expected_pallet_class": "pallet_descoberto"}
+      ],
+      "ordem": "[self.startTracker, self.macacaoTracker, self.palletTracker, self.pacotePolpaTracker,self.labelPolpaTracker, self.finishTracker]",
+      "db_command_etapas": "[self.startTracker.statusPassoStart, self.macacaoTracker.statusPassoMacacao, self.palletTracker.statusPassoCollor, self.palletTracker.statusPassoClassePallet, self.pacotePolpaTracker.statusPassoPacotePolpa, self.labelPolpaTracker.statusPassoLabelPolpa, self.finishTracker.statusPassoFinish]",
+      "db_command_alertas": "self.startTracker.alertPassoStart + self.macacaoTracker.alertPassoMacacao + self.palletTracker.alertPassoCollor + self.palletTracker.alertPassoClassePallet + self.pacotePolpaTracker.alertsPassoPacotePolpa + self.labelPolpaTracker.alertPassoLabelPolpa + self.finishTracker.alertPassoFinish"
+    },
+    {
     "nome": "teste",
       "info": [
         {"expected_macacao_color": "macacao_azul"},
@@ -153,7 +164,8 @@
       "spectingPalletClass": 120,
       "spectingStrech": 180,
       "spectingPacotes": 1200,
-      "spectingFinish" : 180
+      "spectingFinish" : 180,
+      "spectingLabelPolpa": 120
 
     }
   ],
@@ -166,8 +178,10 @@
       "spectingFinish": 5,
       "spectingMacacao": 10,
       "spectingPalletColor": 5,
-      "spectingPalletClass": 5
-      
+      "spectingPalletClass": 5,
+      "spectingLabelPolpa": 5,
+      "presença_polpa": 5,
+      "ausencia_polpa": 5
     }
   ]
 }

@@ -219,8 +219,6 @@ class PalletTracker:
                         detected_in_roi = True
                         print("[PalletTracker] (DEBUG) Detectado pela cor de pallet coberto coberta")     
 
-                                    
-
                     if detected_in_roi:
                         elapsed_time = time.time() - self.start_time
                         if elapsed_time >= self.required_time_classe: 
