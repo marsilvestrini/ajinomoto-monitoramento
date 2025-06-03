@@ -32,10 +32,10 @@ class PacotePolpaTracker:
 
         # Estados do procedimento
         self.estagios = {
-            0: "AGUARDANDO_PRIMEIRA_DESCARGA",
-            1: "AGUARDANDO_REMOCAO_PRIMEIRA",
-            2: "AGUARDANDO_SEGUNDA_DESCARGA",
-            3: "AGUARDANDO_REMOCAO_SEGUNDA"
+            0: "waiting_descarga_1",
+            1: "waiting_remocao_1",
+            2: "waiting_descarga_2",
+            3: "waiting_remocao_2"
         }
         self.estagio_atual = 0
         self.estagio_timer = None
@@ -62,16 +62,16 @@ class PacotePolpaTracker:
         roi_x, roi_y, roi_w, roi_h = roi
         return (roi_x <= center_x <= roi_x + roi_w) and (roi_y <= center_y <= roi_y + roi_h)
 
-    def has_detections_in_descarga(self, produto_boxes, produto_confs):
+    def has_detections_in_carga(self, produto_boxes, produto_confs):
         for i, box in enumerate(produto_boxes):
-            if produto_confs[i] >= self.min_confidence and self.is_inside_roi(box, self.roi_descarga):
+            if produto_confs[i] >= self.min_confidence and self.is_inside_roi(box, self.roi_carga):
                 return True
         return False
 
     def avancar_estagio(self, novo_estagio):
         self.estagio_atual = novo_estagio
         self.estagio_timer = time.time()
-        print(f"[Estágio] Transição para {self.estagios[novo_estagio]}")
+        print(f"[EstágioPolpa] Transição para {self.estagios[novo_estagio]}")
 
     def enviar_conclusao_kafka(self, status):
         status_msg = {"Descarregar os produtos": status}
@@ -113,7 +113,7 @@ class PacotePolpaTracker:
                         produto_confs.append(conf)
 
             # Verificar ROI de descarga
-            tem_detec_descarga = self.has_detections_in_descarga(produto_boxes, produto_confs)
+            tem_detec_descarga = self.has_detections_in_carga(produto_boxes, produto_confs)
             
             # Máquina de estados do procedimento
             if self.estagio_atual == 0:  # Aguardando primeira descarga
@@ -168,12 +168,12 @@ class PacotePolpaTracker:
             
             # Mostrar estágio atual
             cv2.putText(frame, f"Estagio: {self.estagios[self.estagio_atual]}", (10, 30),
-                      cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 255), 2)
+                      cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 255, 255), 2)
             
-            # Mostrar contador de timeout
-            tempo_restante = max(0, self.timeout_geral - (time.time() - self.start_time))
-            cv2.putText(frame, f"Timeout: {tempo_restante:.1f}s", (10, 60),
-                      cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 165, 255), 2)
+            # # Mostrar contador de timeout
+            # tempo_restante = max(0, self.timeout_geral - (time.time() - self.start_time))
+            # cv2.putText(frame, f"Timeout: {tempo_restante:.1f}s", (10, 60),
+            #           cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 165, 255), 2)
             
             return frame
             

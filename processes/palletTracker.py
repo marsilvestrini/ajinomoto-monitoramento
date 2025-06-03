@@ -36,7 +36,7 @@ class PalletTracker:
             "branco": (200, 205, 200),
             "vazio": (146, 155, 153),
             "amarelo_coberto": (114, 221, 240),
-            "verde_polpa": (114, 121, 217)
+            "verde_polpa": (77, 165, 34)
         }
         
         # self.roi_color = [215, 161, 120, 246]  # ROI para verificação de cor
@@ -75,6 +75,8 @@ class PalletTracker:
         roi_frame = frame[y:y+h, x:x+w]
         avg_color_per_row = np.mean(roi_frame, axis=0)
         avg_color = np.mean(avg_color_per_row, axis=0)
+        # print("cor", avg_color)
+
         return self.closest_color(tuple(int(c) for c in avg_color))
             
     def process_video(self, frame):

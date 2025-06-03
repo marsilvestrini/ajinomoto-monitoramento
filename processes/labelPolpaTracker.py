@@ -40,7 +40,7 @@ class LabelPolpaTracker:
         self.timeout_start = None
         self.detection_times = []
 
-        print("[LabelPolpaTracker] Inicialização completa.")
+        # print("[LabelPolpaTracker] Inicialização completa.")
     
     def process_video(self, frame):
         try:
