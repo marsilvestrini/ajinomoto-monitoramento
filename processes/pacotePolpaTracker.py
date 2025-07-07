@@ -168,7 +168,7 @@ class PacotePolpaTracker:
             
             # Mostrar estágio atual
             cv2.putText(frame, f"Estagio: {self.estagios[self.estagio_atual]}", (10, 30),
-                      cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 255, 255), 2)
+                      cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 255, 255), 1)
             
             # # Mostrar contador de timeout
             # tempo_restante = max(0, self.timeout_geral - (time.time() - self.start_time))

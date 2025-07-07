@@ -55,7 +55,7 @@ class LabelPolpaTracker:
             frame = cv2.resize(frame, (640, 640))
 
             # Extrai a ROI definida
-            x1, y1, x2, y2 = self.roi
+            x1, x2, y1, y2 = self.roi
             roi_frame = frame[y1:y2, x1:x2]
 
             # Executa a inferência apenas na ROI
