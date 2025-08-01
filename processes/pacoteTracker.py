@@ -7,6 +7,7 @@ import torch
 from dotenv import load_dotenv
 import os
 import json
+import datetime
 
 load_dotenv()
 
@@ -86,7 +87,7 @@ class PacoteTracker:
         self.next_pacote_id += 1
         return new_id
 
-    def update_pacote_states(self, pacote_id, has_etiqueta, box, in_descarga):
+    def update_pacote_states(self, pacote_id, has_etiqueta, box, in_descarga, frame):
         """Atualiza o estado de um pacote específico"""
         now = time.time()
         center = self.get_center(box)
@@ -139,7 +140,7 @@ class PacoteTracker:
                         
                         # Envia alerta se ainda não foi enviado
                         if not state['alert_sent'] or (now - state['last_alert_time']) > self.ALERT_INTERVAL:
-                            self.send_etiqueta_alert(pacote_id, time_without_etiqueta)
+                            self.send_etiqueta_alert(pacote_id, time_without_etiqueta, frame)
                             state['alert_sent'] = True
                             state['last_alert_time'] = now
 
@@ -151,7 +152,7 @@ class PacoteTracker:
                 del self.pacote_states[old_id]
 
 
-    def send_etiqueta_alert(self, pacote_id, time_without):
+    def send_etiqueta_alert(self, pacote_id, time_without, frame):
         """Envia alerta sobre pacote sem etiqueta com throttling"""
         if not hasattr(self, '_last_alert_time'):
             self._last_alert_time = 0
@@ -170,18 +171,11 @@ class PacoteTracker:
         self.n_alarmes+=1
         print(f"[ALERTA] Pacote {pacote_id} sem etiqueta por {time_without:.1f} segundos")
 
-    def send_disappeared_alert(self, pacote_id, lifetime):
-        """Envia alerta sobre pacote que desapareceu sem etiqueta após tempo significativo"""
-        alert_msg = {
-            "alerta": True,
-            "tipo": "desaparecido_sem_etiqueta",
-            "pacote_id": pacote_id,
-            "mensagem": f"Pacote {pacote_id} desapareceu sem etiqueta após {lifetime:.1f} segundos de existência",
-            "timestamp": time.time()
-        }
-        self.messenger_alertas.send_message(alert_msg)
-        print(f"[ALERTA] Pacote {pacote_id} desapareceu sem etiqueta após {lifetime:.1f} segundos")
-        
+        if os.getenv('SAVE_RESULTS'):
+            filename = os.path.join(os.getenv('SAVE_PATH'),f"{datetime.now()}.jpg")
+            print(f"[Produto Tracker] Saving file: {filename}")
+            cv2.imwrite(filename, frame)
+
     def check_etiqueta_inside_pacote(self, pacote_box, etiqueta_boxes, etiqueta_confs):
         """Verifica se há etiquetas válidas dentro do pacote"""
         x1_p, y1_p, x2_p, y2_p = pacote_box
@@ -213,7 +207,14 @@ class PacoteTracker:
                 self.alertPassoProduto = "Timeout excedido para descarregamento de produtos."
                 print("[Produto Tracker] Timeout excedido para descarregamento de produtos.") 
                 json_alert = {"alerta": True}
-                self.messenger_alertas.send_message(json_alert)               
+                self.messenger_alertas.send_message(json_alert)    
+
+                if os.getenv('SAVE_RESULTS'):
+                    filename = os.path.join(os.getenv('SAVE_PATH'),f"{datetime.now()}.jpg")
+                    print(f"[Produto Tracker] Saving file: {filename}")
+                    cv2.imwrite(filename, frame)
+   
+                
 
             # Move the frame to the same device as the model
             # if self.device == 'cuda':
@@ -295,7 +296,7 @@ class PacoteTracker:
                 if in_carga or in_descarga:
                     pacote_id = self.assign_pacote_id(box)
                     has_etiqueta = self.check_etiqueta_inside_pacote(box, etiqueta_boxes, etiqueta_confs)
-                    self.update_pacote_states(pacote_id, has_etiqueta, box, in_descarga)
+                    self.update_pacote_states(pacote_id, has_etiqueta, box, in_descarga, frame)
                     
                     # Obtém o estado atualizado
                     state = self.pacote_states.get(pacote_id, {'color': (0, 255, 0), 'has_etiqueta': False})

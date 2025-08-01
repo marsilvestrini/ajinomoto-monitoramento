@@ -7,6 +7,7 @@ import json
 from dotenv import load_dotenv
 import os
 import torch  # Import torch to check for CUDA availability
+from datetime import datetime   
 
 load_dotenv()
 
@@ -93,6 +94,11 @@ class StretchTracker:
 
                     json_alert = {"alerta": True}
                     self.messenger_alertas.send_message(json_alert)
+
+                    if os.getenv('SAVE_RESULTS'):
+                        filename = os.path.join(os.getenv('SAVE_PATH'),f"{datetime.now()}.jpg")
+                        print(f"[Stretch Tracker] Saving file: {filename}")
+                        cv2.imwrite(filename, frame)
             
             # Remove old detection times (> required_time seconds ago)
             current_time = time.time()

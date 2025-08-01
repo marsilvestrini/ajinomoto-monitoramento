@@ -1,0 +1,29 @@
+<service>
+  <id>ajinomoto-monitoramento-label-handler</id>
+  <name>Ajinomoto Monitoramento - Label Handler</name>
+  <description>Serviço para manipulação de etiquetas no sistema de monitoramento Ajinomoto</description>
+  
+  <executable>C:\Users\monitoramento_desvio\AppData\Local\Programs\Python\Python310\python.exe</executable>
+  <arguments>"C:\Users\monitoramento_desvio\Documents\sv\ajinomoto-monitoramento\label_handler\emit_label.py"</arguments>
+  
+  <!-- Configuração para iniciar com o Windows -->
+  <startmode>Automatic</startmode>
+  <delayedAutoStart>true</delayedAutoStart>
+  
+  <!-- Configuração de recuperação de falhas -->
+  <onfailure action="restart" delay="10 sec"/>
+  <onfailure action="restart" delay="20 sec"/>
+  <onfailure action="restart" delay="30 sec"/>
+  
+  <!-- Tentar reiniciar rapidamente se o processo terminar inesperadamente -->
+  <resetfailure>1 hour</resetfailure>
+  
+  <workingdirectory>C:\Users\monitoramento_desvio\Documents\sv\ajinomoto-monitoramento\label_handler</workingdirectory>
+  
+  <!-- Configuração de logs -->
+  <log mode="roll-by-size">
+    <directory>logs-winsw</directory>
+    <sizeThreshold>10240</sizeThreshold>
+    <keepFiles>8</keepFiles>
+  </log>
+</service>

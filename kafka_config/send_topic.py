@@ -1,8 +1,8 @@
-from kafka_config import KafkaMessenger
+from kafka_config import KafkaMessengerLocal
 
-messenger = KafkaMessenger(topic='cancelar_procedimentos')
+messenger = KafkaMessengerLocal(topic='cancelar_procedimentos')
 
-json_to_send = {"procedimento": "pallet_fechado"}
+json_to_send = {"procedimento": "feirinha"}
 messenger.send_message(json_to_send)
 
 

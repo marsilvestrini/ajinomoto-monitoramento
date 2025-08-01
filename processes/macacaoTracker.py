@@ -7,6 +7,7 @@ import json
 from dotenv import load_dotenv
 import os
 import torch  # Import torch to check for CUDA availability
+from datetime import datetime
 
 load_dotenv()
 
@@ -91,6 +92,11 @@ class MacacaoTracker:
 
                     json_alert = {"alerta": True}
                     self.messenger_alertas.send_message(json_alert)
+
+                    if os.getenv('SAVE_RESULTS'):
+                        filename = os.path.join(os.getenv('SAVE_PATH'),f"{datetime.now()}.jpg")
+                        print(f"[Macacao Tracker] Saving file: {filename}")
+                        cv2.imwrite(filename, frame)
             
             # Remover tempos antigos (> x segundos atrás)
             self.detection_times = [t for t in self.detection_times if time.time() - t <= self.required_time]

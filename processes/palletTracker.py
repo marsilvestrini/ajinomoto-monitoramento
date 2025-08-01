@@ -7,6 +7,7 @@ import json
 from dotenv import load_dotenv
 import os
 import torch
+from datetime import datetime
 
 load_dotenv()
 
@@ -75,6 +76,7 @@ class PalletTracker:
         roi_frame = frame[y:y+h, x:x+w]
         avg_color_per_row = np.mean(roi_frame, axis=0)
         avg_color = np.mean(avg_color_per_row, axis=0)
+        print("abv color: ", avg_color)
         return self.closest_color(tuple(int(c) for c in avg_color))
             
     def process_video(self, frame):
@@ -143,6 +145,11 @@ class PalletTracker:
                     json_alert = {"alerta": True}
                     self.messenger_alertas.send_message(json_alert)
 
+                    if os.getenv('SAVE_RESULTS'):
+                        filename = os.path.join(os.getenv('SAVE_PATH'),f"{datetime.now()}.jpg")
+                        print(f"[Pallet Tracker] Saving file: {filename}")
+                        cv2.imwrite(filename, frame)
+
                     if self.expected_pallet_class == "pallet_descoberto":
                         print(f"[Pallet Tracker] Classe de pallet esperada == descoberta, pulando etapa")
                         self.spectingPlastic = False
@@ -190,6 +197,12 @@ class PalletTracker:
                     self.isSpecting = False
                     json_alert = {"alerta": True}
                     self.messenger_alertas.send_message(json_alert)
+
+                    if os.getenv('SAVE_RESULTS'):
+                        filename = os.path.join(os.getenv('SAVE_PATH'),f"{datetime.now()}.jpg")
+                        print(f"[Pallet Tracker] Saving file: {filename}")
+                        cv2.imwrite(filename, frame)
+
                 else:
                     results = self.model(frame_tensor, verbose=False)
                     detected_in_roi = False
@@ -218,9 +231,7 @@ class PalletTracker:
                     if dominant_color == 'amarelo_coberto':
                         detected_in_roi = True
                         print("[PalletTracker] (DEBUG) Detectado pela cor de pallet coberto coberta")     
-
-                                    
-
+                           
                     if detected_in_roi:
                         elapsed_time = time.time() - self.start_time
                         if elapsed_time >= self.required_time_classe: 

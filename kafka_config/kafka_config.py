@@ -20,6 +20,23 @@ class KafkaMessenger:
         self.producer.flush()  # Garante que a mensagem seja enviada
         print(f"[KafkaMessenger] JSON enviado para o tópico '{self.topic}': {json_data}")
 
+class KafkaMessengerLocal:
+    def __init__(self, topic, bootstrap_servers='localhost:29092'):
+        self.producer = KafkaProducer(
+            bootstrap_servers=bootstrap_servers,
+            value_serializer=lambda v: json.dumps(v).encode('utf-8')  # Serializa o JSON
+        )
+        self.topic = topic  # Tópico pode ser definido ao instanciar a classe
+    
+    def send_message(self, json_data):
+        """
+        Envia um JSON para o tópico Kafka.
+        :param json_data: Dicionário Python contendo o JSON a ser enviado.
+        """
+        self.producer.send(self.topic, json_data)
+        self.producer.flush()  # Garante que a mensagem seja enviada
+        print(f"[KafkaMessenger] JSON enviado para o tópico '{self.topic}': {json_data}")
+
 class KafkaListener:
     def __init__(self, topic, bootstrap_servers='kafka:9092'):
         self.consumer = KafkaConsumer(

@@ -12,16 +12,16 @@ class KafkaMessengerLabels:
         self.topic = topic  # Tópico pode ser definido ao instanciar a classe
     
     def send_message(self, json_data):
-        """
-        Envia um JSON para o tópico Kafka.
-        :param json_data: Dicionário Python contendo o JSON a ser enviado.
-        """
-        self.producer.send(self.topic, json_data)
-        self.producer.flush()  # Garante que a mensagem seja enviada
-        print(f"[KafkaMessenger] JSON enviado para o tópico '{self.topic}': {json_data}")
+        try:
+            future = self.producer.send(self.topic, json_data)
+            result = future.get(timeout=5)  # timeout evita bloqueio infinito
+            self.producer.flush()
+            print(f"[KafkaMessenger] JSON enviado para o tópico '{self.topic}': {json_data}")
+        except Exception as e:
+            print(f"[KafkaMessenger] Falha ao enviar mensagem para Kafka: {e}")
 
-class KafkaListener:
-    def __init__(self, topic, bootstrap_servers='kafka:9092'):
+class KafkaListenerLabels:
+    def __init__(self, topic, bootstrap_servers='localhost:29092'):
         self.consumer = KafkaConsumer(
             topic,
             bootstrap_servers=bootstrap_servers,

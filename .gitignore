@@ -8,3 +8,6 @@ __pycache__/
 *.py[cod]
 # Dados do Kafka gerados por container
 kafka_config/docker-kafka/kafka-data/
+
+*.exe
+*.jpg
