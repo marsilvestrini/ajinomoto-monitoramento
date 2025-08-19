@@ -2,21 +2,41 @@ import psycopg2
 from psycopg2 import sql, extras  # Importe o módulo extras
 from datetime import datetime
 
+
 class ProcedimentoManager:
-    def __init__(self, dbname="ajinomoto_monitoramento", user="postgres", password="ajinomoto", host="postgres", port="5432"):
+    def __init__(
+        self,
+        dbname="ajinomoto_monitoramento",
+        user="postgres",
+        password="ajinomoto",
+        host="postgres",
+        port="5432",
+    ):
         """
         Construtor da classe. Inicializa a conexão com o banco de dados.
         """
         self.conn = psycopg2.connect(
-            dbname=dbname,
-            user=user,
-            password=password,
-            host=host,
-            port=port
+            dbname=dbname, user=user, password=password, host=host, port=port
         )
         self.cursor = self.conn.cursor()
 
-    def adicionar_procedimento(self, timestamp_inicio, timestamp_fim, etiqueta, quantidade_etiquetas, alertas, etapa_1, etapa_2, etapa_3, etapa_4, etapa_5, etapa_6, etapa_7, n_alarmes, observacoes, id_procedimento):
+    def adicionar_procedimento(
+        self,
+        timestamp_inicio,
+        timestamp_fim,
+        etiqueta,
+        quantidade_etiquetas,
+        alertas,
+        etapa_1,
+        etapa_2,
+        etapa_3,
+        etapa_4,
+        etapa_5,
+        etapa_6,
+        etapa_7,
+        observacoes,
+        id_procedimento,
+    ):
         """
         Adiciona um novo procedimento à tabela.
         """
@@ -24,15 +44,29 @@ class ProcedimentoManager:
             query = sql.SQL("""
                 INSERT INTO procedimentos (
                     timestamp_inicio, timestamp_fim, etiqueta, quantidade_etiquetas,
-                    alertas, etapa_1, etapa_2, etapa_3, etapa_4, etapa_5, etapa_6, etapa_7, n_alarmes, observacoes, id_procedimento
+                    alertas, etapa_1, etapa_2, etapa_3, etapa_4, etapa_5, etapa_6, etapa_7, observacoes, id_procedimento
                 )
                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             """)
-            self.cursor.execute(query, (
-                timestamp_inicio, timestamp_fim, etiqueta, quantidade_etiquetas,
-                extras.Json(alertas),  # Converta o dicionário para JSONB
-                etapa_1, etapa_2, etapa_3, etapa_4, etapa_5, etapa_6, etapa_7, n_alarmes, observacoes, id_procedimento
-            ))
+            self.cursor.execute(
+                query,
+                (
+                    timestamp_inicio,
+                    timestamp_fim,
+                    etiqueta,
+                    quantidade_etiquetas,
+                    extras.Json(alertas),  # Converta o dicionário para JSONB
+                    etapa_1,
+                    etapa_2,
+                    etapa_3,
+                    etapa_4,
+                    etapa_5,
+                    etapa_6,
+                    etapa_7,
+                    observacoes,
+                    id_procedimento,
+                ),
+            )
             self.conn.commit()
             print("[PG Config] Procedimento registrado no db com sucesso!")
         except Exception as e:
@@ -46,6 +80,7 @@ class ProcedimentoManager:
         self.cursor.close()
         self.conn.close()
         print("[PG Config] Conexão com o banco de dados fechada.")
+
 
 # # Exemplo de uso
 # if __name__ == "__main__":
@@ -81,3 +116,4 @@ class ProcedimentoManager:
 
 #     # Fecha a conexão com o banco de dados
 #     manager.fechar_conexao()
+

@@ -13,7 +13,6 @@ CREATE TABLE procedimentos (
     etapa_5 BOOLEAN,
     etapa_6 BOOLEAN,
     etapa_7 BOOLEAN,
-    n_alarmes INT,
     status_geral BOOLEAN GENERATED ALWAYS AS (
         CASE 
             WHEN (etapa_1 = FALSE OR etapa_2 = FALSE OR etapa_3 = FALSE OR 

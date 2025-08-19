@@ -22007,3 +22007,241 @@ Traceback (most recent call last):
   File "C:\Users\monitoramento_desvio\AppData\Local\Programs\Python\Python310\lib\site-packages\kafka\client_async.py", line 1064, in check_version
     raise Errors.NoBrokersAvailable()
 kafka.errors.NoBrokersAvailable: NoBrokersAvailable
+Traceback (most recent call last):
+  File "C:\Users\monitoramento_desvio\Documents\sv\ajinomoto-monitoramento\label_handler\emit_label.py", line 31, in <module>
+    read_qr_code()
+  File "C:\Users\monitoramento_desvio\Documents\sv\ajinomoto-monitoramento\label_handler\emit_label.py", line 10, in read_qr_code
+    messenger_etiquetas = KafkaMessengerLabels(topic='etiquetas')
+  File "C:\Users\monitoramento_desvio\Documents\sv\ajinomoto-monitoramento\label_handler\kafka_config_label.py", line 8, in __init__
+    self.producer = KafkaProducer(
+  File "C:\Users\monitoramento_desvio\AppData\Local\Programs\Python\Python310\lib\site-packages\kafka\producer\kafka.py", line 406, in __init__
+    client = self.config['kafka_client'](
+  File "C:\Users\monitoramento_desvio\AppData\Local\Programs\Python\Python310\lib\site-packages\kafka\client_async.py", line 262, in __init__
+    self.config['api_version'] = self.check_version()
+  File "C:\Users\monitoramento_desvio\AppData\Local\Programs\Python\Python310\lib\site-packages\kafka\client_async.py", line 1064, in check_version
+    raise Errors.NoBrokersAvailable()
+kafka.errors.NoBrokersAvailable: NoBrokersAvailable
+Traceback (most recent call last):
+  File "C:\Users\monitoramento_desvio\Documents\sv\ajinomoto-monitoramento\label_handler\emit_label.py", line 31, in <module>
+    read_qr_code()
+  File "C:\Users\monitoramento_desvio\Documents\sv\ajinomoto-monitoramento\label_handler\emit_label.py", line 10, in read_qr_code
+    messenger_etiquetas = KafkaMessengerLabels(topic='etiquetas')
+  File "C:\Users\monitoramento_desvio\Documents\sv\ajinomoto-monitoramento\label_handler\kafka_config_label.py", line 8, in __init__
+    self.producer = KafkaProducer(
+  File "C:\Users\monitoramento_desvio\AppData\Local\Programs\Python\Python310\lib\site-packages\kafka\producer\kafka.py", line 406, in __init__
+    client = self.config['kafka_client'](
+  File "C:\Users\monitoramento_desvio\AppData\Local\Programs\Python\Python310\lib\site-packages\kafka\client_async.py", line 262, in __init__
+    self.config['api_version'] = self.check_version()
+  File "C:\Users\monitoramento_desvio\AppData\Local\Programs\Python\Python310\lib\site-packages\kafka\client_async.py", line 1064, in check_version
+    raise Errors.NoBrokersAvailable()
+kafka.errors.NoBrokersAvailable: NoBrokersAvailable
+Traceback (most recent call last):
+  File "C:\Users\monitoramento_desvio\Documents\sv\ajinomoto-monitoramento\label_handler\emit_label.py", line 31, in <module>
+    read_qr_code()
+  File "C:\Users\monitoramento_desvio\Documents\sv\ajinomoto-monitoramento\label_handler\emit_label.py", line 10, in read_qr_code
+    messenger_etiquetas = KafkaMessengerLabels(topic='etiquetas')
+  File "C:\Users\monitoramento_desvio\Documents\sv\ajinomoto-monitoramento\label_handler\kafka_config_label.py", line 8, in __init__
+    self.producer = KafkaProducer(
+  File "C:\Users\monitoramento_desvio\AppData\Local\Programs\Python\Python310\lib\site-packages\kafka\producer\kafka.py", line 406, in __init__
+    client = self.config['kafka_client'](
+  File "C:\Users\monitoramento_desvio\AppData\Local\Programs\Python\Python310\lib\site-packages\kafka\client_async.py", line 262, in __init__
+    self.config['api_version'] = self.check_version()
+  File "C:\Users\monitoramento_desvio\AppData\Local\Programs\Python\Python310\lib\site-packages\kafka\client_async.py", line 1064, in check_version
+    raise Errors.NoBrokersAvailable()
+kafka.errors.NoBrokersAvailable: NoBrokersAvailable
+Traceback (most recent call last):
+  File "C:\Users\monitoramento_desvio\Documents\sv\ajinomoto-monitoramento\label_handler\emit_label.py", line 31, in <module>
+    read_qr_code()
+  File "C:\Users\monitoramento_desvio\Documents\sv\ajinomoto-monitoramento\label_handler\emit_label.py", line 10, in read_qr_code
+    messenger_etiquetas = KafkaMessengerLabels(topic='etiquetas')
+  File "C:\Users\monitoramento_desvio\Documents\sv\ajinomoto-monitoramento\label_handler\kafka_config_label.py", line 8, in __init__
+    self.producer = KafkaProducer(
+  File "C:\Users\monitoramento_desvio\AppData\Local\Programs\Python\Python310\lib\site-packages\kafka\producer\kafka.py", line 406, in __init__
+    client = self.config['kafka_client'](
+  File "C:\Users\monitoramento_desvio\AppData\Local\Programs\Python\Python310\lib\site-packages\kafka\client_async.py", line 262, in __init__
+    self.config['api_version'] = self.check_version()
+  File "C:\Users\monitoramento_desvio\AppData\Local\Programs\Python\Python310\lib\site-packages\kafka\client_async.py", line 1064, in check_version
+    raise Errors.NoBrokersAvailable()
+kafka.errors.NoBrokersAvailable: NoBrokersAvailable
+Traceback (most recent call last):
+  File "C:\Users\monitoramento_desvio\Documents\sv\ajinomoto-monitoramento\label_handler\emit_label.py", line 31, in <module>
+    read_qr_code()
+  File "C:\Users\monitoramento_desvio\Documents\sv\ajinomoto-monitoramento\label_handler\emit_label.py", line 10, in read_qr_code
+    messenger_etiquetas = KafkaMessengerLabels(topic='etiquetas')
+  File "C:\Users\monitoramento_desvio\Documents\sv\ajinomoto-monitoramento\label_handler\kafka_config_label.py", line 8, in __init__
+    self.producer = KafkaProducer(
+  File "C:\Users\monitoramento_desvio\AppData\Local\Programs\Python\Python310\lib\site-packages\kafka\producer\kafka.py", line 406, in __init__
+    client = self.config['kafka_client'](
+  File "C:\Users\monitoramento_desvio\AppData\Local\Programs\Python\Python310\lib\site-packages\kafka\client_async.py", line 262, in __init__
+    self.config['api_version'] = self.check_version()
+  File "C:\Users\monitoramento_desvio\AppData\Local\Programs\Python\Python310\lib\site-packages\kafka\client_async.py", line 1064, in check_version
+    raise Errors.NoBrokersAvailable()
+kafka.errors.NoBrokersAvailable: NoBrokersAvailable
+Traceback (most recent call last):
+  File "C:\Users\monitoramento_desvio\Documents\sv\ajinomoto-monitoramento\label_handler\emit_label.py", line 31, in <module>
+    read_qr_code()
+  File "C:\Users\monitoramento_desvio\Documents\sv\ajinomoto-monitoramento\label_handler\emit_label.py", line 10, in read_qr_code
+    messenger_etiquetas = KafkaMessengerLabels(topic='etiquetas')
+  File "C:\Users\monitoramento_desvio\Documents\sv\ajinomoto-monitoramento\label_handler\kafka_config_label.py", line 8, in __init__
+    self.producer = KafkaProducer(
+  File "C:\Users\monitoramento_desvio\AppData\Local\Programs\Python\Python310\lib\site-packages\kafka\producer\kafka.py", line 406, in __init__
+    client = self.config['kafka_client'](
+  File "C:\Users\monitoramento_desvio\AppData\Local\Programs\Python\Python310\lib\site-packages\kafka\client_async.py", line 262, in __init__
+    self.config['api_version'] = self.check_version()
+  File "C:\Users\monitoramento_desvio\AppData\Local\Programs\Python\Python310\lib\site-packages\kafka\client_async.py", line 1064, in check_version
+    raise Errors.NoBrokersAvailable()
+kafka.errors.NoBrokersAvailable: NoBrokersAvailable
+Traceback (most recent call last):
+  File "C:\Users\monitoramento_desvio\Documents\sv\ajinomoto-monitoramento\label_handler\emit_label.py", line 31, in <module>
+    read_qr_code()
+  File "C:\Users\monitoramento_desvio\Documents\sv\ajinomoto-monitoramento\label_handler\emit_label.py", line 10, in read_qr_code
+    messenger_etiquetas = KafkaMessengerLabels(topic='etiquetas')
+  File "C:\Users\monitoramento_desvio\Documents\sv\ajinomoto-monitoramento\label_handler\kafka_config_label.py", line 8, in __init__
+    self.producer = KafkaProducer(
+  File "C:\Users\monitoramento_desvio\AppData\Local\Programs\Python\Python310\lib\site-packages\kafka\producer\kafka.py", line 406, in __init__
+    client = self.config['kafka_client'](
+  File "C:\Users\monitoramento_desvio\AppData\Local\Programs\Python\Python310\lib\site-packages\kafka\client_async.py", line 262, in __init__
+    self.config['api_version'] = self.check_version()
+  File "C:\Users\monitoramento_desvio\AppData\Local\Programs\Python\Python310\lib\site-packages\kafka\client_async.py", line 1064, in check_version
+    raise Errors.NoBrokersAvailable()
+kafka.errors.NoBrokersAvailable: NoBrokersAvailable
+Traceback (most recent call last):
+  File "C:\Users\monitoramento_desvio\Documents\sv\ajinomoto-monitoramento\label_handler\emit_label.py", line 31, in <module>
+    read_qr_code()
+  File "C:\Users\monitoramento_desvio\Documents\sv\ajinomoto-monitoramento\label_handler\emit_label.py", line 10, in read_qr_code
+    messenger_etiquetas = KafkaMessengerLabels(topic='etiquetas')
+  File "C:\Users\monitoramento_desvio\Documents\sv\ajinomoto-monitoramento\label_handler\kafka_config_label.py", line 8, in __init__
+    self.producer = KafkaProducer(
+  File "C:\Users\monitoramento_desvio\AppData\Local\Programs\Python\Python310\lib\site-packages\kafka\producer\kafka.py", line 406, in __init__
+    client = self.config['kafka_client'](
+  File "C:\Users\monitoramento_desvio\AppData\Local\Programs\Python\Python310\lib\site-packages\kafka\client_async.py", line 262, in __init__
+    self.config['api_version'] = self.check_version()
+  File "C:\Users\monitoramento_desvio\AppData\Local\Programs\Python\Python310\lib\site-packages\kafka\client_async.py", line 1064, in check_version
+    raise Errors.NoBrokersAvailable()
+kafka.errors.NoBrokersAvailable: NoBrokersAvailable
+Traceback (most recent call last):
+  File "C:\Users\monitoramento_desvio\Documents\sv\ajinomoto-monitoramento\label_handler\emit_label.py", line 31, in <module>
+    read_qr_code()
+  File "C:\Users\monitoramento_desvio\Documents\sv\ajinomoto-monitoramento\label_handler\emit_label.py", line 10, in read_qr_code
+    messenger_etiquetas = KafkaMessengerLabels(topic='etiquetas')
+  File "C:\Users\monitoramento_desvio\Documents\sv\ajinomoto-monitoramento\label_handler\kafka_config_label.py", line 8, in __init__
+    self.producer = KafkaProducer(
+  File "C:\Users\monitoramento_desvio\AppData\Local\Programs\Python\Python310\lib\site-packages\kafka\producer\kafka.py", line 406, in __init__
+    client = self.config['kafka_client'](
+  File "C:\Users\monitoramento_desvio\AppData\Local\Programs\Python\Python310\lib\site-packages\kafka\client_async.py", line 262, in __init__
+    self.config['api_version'] = self.check_version()
+  File "C:\Users\monitoramento_desvio\AppData\Local\Programs\Python\Python310\lib\site-packages\kafka\client_async.py", line 1064, in check_version
+    raise Errors.NoBrokersAvailable()
+kafka.errors.NoBrokersAvailable: NoBrokersAvailable
+Traceback (most recent call last):
+  File "C:\Users\monitoramento_desvio\Documents\sv\ajinomoto-monitoramento\label_handler\emit_label.py", line 31, in <module>
+    read_qr_code()
+  File "C:\Users\monitoramento_desvio\Documents\sv\ajinomoto-monitoramento\label_handler\emit_label.py", line 10, in read_qr_code
+    messenger_etiquetas = KafkaMessengerLabels(topic='etiquetas')
+  File "C:\Users\monitoramento_desvio\Documents\sv\ajinomoto-monitoramento\label_handler\kafka_config_label.py", line 8, in __init__
+    self.producer = KafkaProducer(
+  File "C:\Users\monitoramento_desvio\AppData\Local\Programs\Python\Python310\lib\site-packages\kafka\producer\kafka.py", line 406, in __init__
+    client = self.config['kafka_client'](
+  File "C:\Users\monitoramento_desvio\AppData\Local\Programs\Python\Python310\lib\site-packages\kafka\client_async.py", line 262, in __init__
+    self.config['api_version'] = self.check_version()
+  File "C:\Users\monitoramento_desvio\AppData\Local\Programs\Python\Python310\lib\site-packages\kafka\client_async.py", line 1064, in check_version
+    raise Errors.NoBrokersAvailable()
+kafka.errors.NoBrokersAvailable: NoBrokersAvailable
+Traceback (most recent call last):
+  File "C:\Users\monitoramento_desvio\Documents\sv\ajinomoto-monitoramento\label_handler\emit_label.py", line 31, in <module>
+    read_qr_code()
+  File "C:\Users\monitoramento_desvio\Documents\sv\ajinomoto-monitoramento\label_handler\emit_label.py", line 10, in read_qr_code
+    messenger_etiquetas = KafkaMessengerLabels(topic='etiquetas')
+  File "C:\Users\monitoramento_desvio\Documents\sv\ajinomoto-monitoramento\label_handler\kafka_config_label.py", line 8, in __init__
+    self.producer = KafkaProducer(
+  File "C:\Users\monitoramento_desvio\AppData\Local\Programs\Python\Python310\lib\site-packages\kafka\producer\kafka.py", line 406, in __init__
+    client = self.config['kafka_client'](
+  File "C:\Users\monitoramento_desvio\AppData\Local\Programs\Python\Python310\lib\site-packages\kafka\client_async.py", line 262, in __init__
+    self.config['api_version'] = self.check_version()
+  File "C:\Users\monitoramento_desvio\AppData\Local\Programs\Python\Python310\lib\site-packages\kafka\client_async.py", line 1064, in check_version
+    raise Errors.NoBrokersAvailable()
+kafka.errors.NoBrokersAvailable: NoBrokersAvailable
+Traceback (most recent call last):
+  File "C:\Users\monitoramento_desvio\Documents\sv\ajinomoto-monitoramento\label_handler\emit_label.py", line 31, in <module>
+    read_qr_code()
+  File "C:\Users\monitoramento_desvio\Documents\sv\ajinomoto-monitoramento\label_handler\emit_label.py", line 10, in read_qr_code
+    messenger_etiquetas = KafkaMessengerLabels(topic='etiquetas')
+  File "C:\Users\monitoramento_desvio\Documents\sv\ajinomoto-monitoramento\label_handler\kafka_config_label.py", line 8, in __init__
+    self.producer = KafkaProducer(
+  File "C:\Users\monitoramento_desvio\AppData\Local\Programs\Python\Python310\lib\site-packages\kafka\producer\kafka.py", line 406, in __init__
+    client = self.config['kafka_client'](
+  File "C:\Users\monitoramento_desvio\AppData\Local\Programs\Python\Python310\lib\site-packages\kafka\client_async.py", line 262, in __init__
+    self.config['api_version'] = self.check_version()
+  File "C:\Users\monitoramento_desvio\AppData\Local\Programs\Python\Python310\lib\site-packages\kafka\client_async.py", line 1064, in check_version
+    raise Errors.NoBrokersAvailable()
+kafka.errors.NoBrokersAvailable: NoBrokersAvailable
+Traceback (most recent call last):
+  File "C:\Users\monitoramento_desvio\Documents\sv\ajinomoto-monitoramento\label_handler\emit_label.py", line 31, in <module>
+    read_qr_code()
+  File "C:\Users\monitoramento_desvio\Documents\sv\ajinomoto-monitoramento\label_handler\emit_label.py", line 10, in read_qr_code
+    messenger_etiquetas = KafkaMessengerLabels(topic='etiquetas')
+  File "C:\Users\monitoramento_desvio\Documents\sv\ajinomoto-monitoramento\label_handler\kafka_config_label.py", line 8, in __init__
+    self.producer = KafkaProducer(
+  File "C:\Users\monitoramento_desvio\AppData\Local\Programs\Python\Python310\lib\site-packages\kafka\producer\kafka.py", line 406, in __init__
+    client = self.config['kafka_client'](
+  File "C:\Users\monitoramento_desvio\AppData\Local\Programs\Python\Python310\lib\site-packages\kafka\client_async.py", line 262, in __init__
+    self.config['api_version'] = self.check_version()
+  File "C:\Users\monitoramento_desvio\AppData\Local\Programs\Python\Python310\lib\site-packages\kafka\client_async.py", line 1064, in check_version
+    raise Errors.NoBrokersAvailable()
+kafka.errors.NoBrokersAvailable: NoBrokersAvailable
+Traceback (most recent call last):
+  File "C:\Users\monitoramento_desvio\Documents\sv\ajinomoto-monitoramento\label_handler\emit_label.py", line 31, in <module>
+    read_qr_code()
+  File "C:\Users\monitoramento_desvio\Documents\sv\ajinomoto-monitoramento\label_handler\emit_label.py", line 10, in read_qr_code
+    messenger_etiquetas = KafkaMessengerLabels(topic='etiquetas')
+  File "C:\Users\monitoramento_desvio\Documents\sv\ajinomoto-monitoramento\label_handler\kafka_config_label.py", line 8, in __init__
+    self.producer = KafkaProducer(
+  File "C:\Users\monitoramento_desvio\AppData\Local\Programs\Python\Python310\lib\site-packages\kafka\producer\kafka.py", line 406, in __init__
+    client = self.config['kafka_client'](
+  File "C:\Users\monitoramento_desvio\AppData\Local\Programs\Python\Python310\lib\site-packages\kafka\client_async.py", line 262, in __init__
+    self.config['api_version'] = self.check_version()
+  File "C:\Users\monitoramento_desvio\AppData\Local\Programs\Python\Python310\lib\site-packages\kafka\client_async.py", line 1064, in check_version
+    raise Errors.NoBrokersAvailable()
+kafka.errors.NoBrokersAvailable: NoBrokersAvailable
+Traceback (most recent call last):
+  File "C:\Users\monitoramento_desvio\Documents\sv\ajinomoto-monitoramento\label_handler\emit_label.py", line 31, in <module>
+    read_qr_code()
+  File "C:\Users\monitoramento_desvio\Documents\sv\ajinomoto-monitoramento\label_handler\emit_label.py", line 10, in read_qr_code
+    messenger_etiquetas = KafkaMessengerLabels(topic='etiquetas')
+  File "C:\Users\monitoramento_desvio\Documents\sv\ajinomoto-monitoramento\label_handler\kafka_config_label.py", line 8, in __init__
+    self.producer = KafkaProducer(
+  File "C:\Users\monitoramento_desvio\AppData\Local\Programs\Python\Python310\lib\site-packages\kafka\producer\kafka.py", line 406, in __init__
+    client = self.config['kafka_client'](
+  File "C:\Users\monitoramento_desvio\AppData\Local\Programs\Python\Python310\lib\site-packages\kafka\client_async.py", line 262, in __init__
+    self.config['api_version'] = self.check_version()
+  File "C:\Users\monitoramento_desvio\AppData\Local\Programs\Python\Python310\lib\site-packages\kafka\client_async.py", line 1064, in check_version
+    raise Errors.NoBrokersAvailable()
+kafka.errors.NoBrokersAvailable: NoBrokersAvailable
+Traceback (most recent call last):
+  File "C:\Users\monitoramento_desvio\Documents\sv\ajinomoto-monitoramento\label_handler\emit_label.py", line 31, in <module>
+    read_qr_code()
+  File "C:\Users\monitoramento_desvio\Documents\sv\ajinomoto-monitoramento\label_handler\emit_label.py", line 10, in read_qr_code
+    messenger_etiquetas = KafkaMessengerLabels(topic='etiquetas')
+  File "C:\Users\monitoramento_desvio\Documents\sv\ajinomoto-monitoramento\label_handler\kafka_config_label.py", line 8, in __init__
+    self.producer = KafkaProducer(
+  File "C:\Users\monitoramento_desvio\AppData\Local\Programs\Python\Python310\lib\site-packages\kafka\producer\kafka.py", line 406, in __init__
+    client = self.config['kafka_client'](
+  File "C:\Users\monitoramento_desvio\AppData\Local\Programs\Python\Python310\lib\site-packages\kafka\client_async.py", line 262, in __init__
+    self.config['api_version'] = self.check_version()
+  File "C:\Users\monitoramento_desvio\AppData\Local\Programs\Python\Python310\lib\site-packages\kafka\client_async.py", line 1064, in check_version
+    raise Errors.NoBrokersAvailable()
+kafka.errors.NoBrokersAvailable: NoBrokersAvailable
+Traceback (most recent call last):
+  File "C:\Users\monitoramento_desvio\Documents\sv\ajinomoto-monitoramento\label_handler\emit_label.py", line 31, in <module>
+    read_qr_code()
+  File "C:\Users\monitoramento_desvio\Documents\sv\ajinomoto-monitoramento\label_handler\emit_label.py", line 10, in read_qr_code
+    messenger_etiquetas = KafkaMessengerLabels(topic='etiquetas')
+  File "C:\Users\monitoramento_desvio\Documents\sv\ajinomoto-monitoramento\label_handler\kafka_config_label.py", line 8, in __init__
+    self.producer = KafkaProducer(
+  File "C:\Users\monitoramento_desvio\AppData\Local\Programs\Python\Python310\lib\site-packages\kafka\producer\kafka.py", line 406, in __init__
+    client = self.config['kafka_client'](
+  File "C:\Users\monitoramento_desvio\AppData\Local\Programs\Python\Python310\lib\site-packages\kafka\client_async.py", line 262, in __init__
+    self.config['api_version'] = self.check_version()
+  File "C:\Users\monitoramento_desvio\AppData\Local\Programs\Python\Python310\lib\site-packages\kafka\client_async.py", line 1064, in check_version
+    raise Errors.NoBrokersAvailable()
+kafka.errors.NoBrokersAvailable: NoBrokersAvailable

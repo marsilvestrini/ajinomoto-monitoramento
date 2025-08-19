@@ -6365,3 +6365,79 @@
 2025-07-23 18:01:53,963 INFO  - Starting C:\Users\monitoramento_desvio\AppData\Local\Programs\Python\Python310\python.exe "C:\Users\monitoramento_desvio\Documents\sv\ajinomoto-monitoramento\label_handler\emit_label.py"
 2025-07-23 18:01:53,992 INFO  - Started process 26368
 2025-07-23 18:01:54,009 DEBUG - Forwarding logs of the process System.Diagnostics.Process (python) to WinSW.SizeBasedRollingLogAppender
+2025-08-14 09:22:06,610 DEBUG - Starting WinSW in service mode
+2025-08-14 09:22:06,772 INFO  - Starting C:\Users\monitoramento_desvio\AppData\Local\Programs\Python\Python310\python.exe "C:\Users\monitoramento_desvio\Documents\sv\ajinomoto-monitoramento\label_handler\emit_label.py"
+2025-08-14 09:22:07,069 INFO  - Started process 24132
+2025-08-14 09:22:07,079 DEBUG - Forwarding logs of the process System.Diagnostics.Process (python) to WinSW.SizeBasedRollingLogAppender
+2025-08-14 09:22:20,428 DEBUG - Starting WinSW in service mode
+2025-08-14 09:22:20,546 INFO  - Starting C:\Users\monitoramento_desvio\AppData\Local\Programs\Python\Python310\python.exe "C:\Users\monitoramento_desvio\Documents\sv\ajinomoto-monitoramento\label_handler\emit_label.py"
+2025-08-14 09:22:20,569 INFO  - Started process 25388
+2025-08-14 09:22:20,579 DEBUG - Forwarding logs of the process System.Diagnostics.Process (python) to WinSW.SizeBasedRollingLogAppender
+2025-08-14 09:22:43,167 DEBUG - Starting WinSW in service mode
+2025-08-14 09:22:43,277 INFO  - Starting C:\Users\monitoramento_desvio\AppData\Local\Programs\Python\Python310\python.exe "C:\Users\monitoramento_desvio\Documents\sv\ajinomoto-monitoramento\label_handler\emit_label.py"
+2025-08-14 09:22:43,308 INFO  - Started process 24884
+2025-08-14 09:22:43,321 DEBUG - Forwarding logs of the process System.Diagnostics.Process (python) to WinSW.SizeBasedRollingLogAppender
+2025-08-14 09:23:15,924 DEBUG - Starting WinSW in service mode
+2025-08-14 09:23:16,039 INFO  - Starting C:\Users\monitoramento_desvio\AppData\Local\Programs\Python\Python310\python.exe "C:\Users\monitoramento_desvio\Documents\sv\ajinomoto-monitoramento\label_handler\emit_label.py"
+2025-08-14 09:23:16,060 INFO  - Started process 25988
+2025-08-14 09:23:16,069 DEBUG - Forwarding logs of the process System.Diagnostics.Process (python) to WinSW.SizeBasedRollingLogAppender
+2025-08-14 09:23:48,662 DEBUG - Starting WinSW in service mode
+2025-08-14 09:23:48,769 INFO  - Starting C:\Users\monitoramento_desvio\AppData\Local\Programs\Python\Python310\python.exe "C:\Users\monitoramento_desvio\Documents\sv\ajinomoto-monitoramento\label_handler\emit_label.py"
+2025-08-14 09:23:48,792 INFO  - Started process 5304
+2025-08-14 09:23:48,801 DEBUG - Forwarding logs of the process System.Diagnostics.Process (python) to WinSW.SizeBasedRollingLogAppender
+2025-08-14 09:24:21,371 DEBUG - Starting WinSW in service mode
+2025-08-14 09:24:21,474 INFO  - Starting C:\Users\monitoramento_desvio\AppData\Local\Programs\Python\Python310\python.exe "C:\Users\monitoramento_desvio\Documents\sv\ajinomoto-monitoramento\label_handler\emit_label.py"
+2025-08-14 09:24:21,496 INFO  - Started process 23508
+2025-08-14 09:24:21,504 DEBUG - Forwarding logs of the process System.Diagnostics.Process (python) to WinSW.SizeBasedRollingLogAppender
+2025-08-14 09:24:54,110 DEBUG - Starting WinSW in service mode
+2025-08-14 09:24:54,209 INFO  - Starting C:\Users\monitoramento_desvio\AppData\Local\Programs\Python\Python310\python.exe "C:\Users\monitoramento_desvio\Documents\sv\ajinomoto-monitoramento\label_handler\emit_label.py"
+2025-08-14 09:24:54,230 INFO  - Started process 18036
+2025-08-14 09:24:54,239 DEBUG - Forwarding logs of the process System.Diagnostics.Process (python) to WinSW.SizeBasedRollingLogAppender
+2025-08-14 09:25:26,816 DEBUG - Starting WinSW in service mode
+2025-08-14 09:25:26,932 INFO  - Starting C:\Users\monitoramento_desvio\AppData\Local\Programs\Python\Python310\python.exe "C:\Users\monitoramento_desvio\Documents\sv\ajinomoto-monitoramento\label_handler\emit_label.py"
+2025-08-14 09:25:26,951 INFO  - Started process 13008
+2025-08-14 09:25:26,960 DEBUG - Forwarding logs of the process System.Diagnostics.Process (python) to WinSW.SizeBasedRollingLogAppender
+2025-08-14 09:25:59,496 DEBUG - Starting WinSW in service mode
+2025-08-14 09:25:59,600 INFO  - Starting C:\Users\monitoramento_desvio\AppData\Local\Programs\Python\Python310\python.exe "C:\Users\monitoramento_desvio\Documents\sv\ajinomoto-monitoramento\label_handler\emit_label.py"
+2025-08-14 09:25:59,620 INFO  - Started process 22568
+2025-08-14 09:25:59,628 DEBUG - Forwarding logs of the process System.Diagnostics.Process (python) to WinSW.SizeBasedRollingLogAppender
+2025-08-14 09:26:32,173 DEBUG - Starting WinSW in service mode
+2025-08-14 09:26:32,274 INFO  - Starting C:\Users\monitoramento_desvio\AppData\Local\Programs\Python\Python310\python.exe "C:\Users\monitoramento_desvio\Documents\sv\ajinomoto-monitoramento\label_handler\emit_label.py"
+2025-08-14 09:26:32,293 INFO  - Started process 20556
+2025-08-14 09:26:32,301 DEBUG - Forwarding logs of the process System.Diagnostics.Process (python) to WinSW.SizeBasedRollingLogAppender
+2025-08-14 09:27:04,881 DEBUG - Starting WinSW in service mode
+2025-08-14 09:27:04,986 INFO  - Starting C:\Users\monitoramento_desvio\AppData\Local\Programs\Python\Python310\python.exe "C:\Users\monitoramento_desvio\Documents\sv\ajinomoto-monitoramento\label_handler\emit_label.py"
+2025-08-14 09:27:05,006 INFO  - Started process 26188
+2025-08-14 09:27:05,014 DEBUG - Forwarding logs of the process System.Diagnostics.Process (python) to WinSW.SizeBasedRollingLogAppender
+2025-08-14 09:27:37,592 DEBUG - Starting WinSW in service mode
+2025-08-14 09:27:37,698 INFO  - Starting C:\Users\monitoramento_desvio\AppData\Local\Programs\Python\Python310\python.exe "C:\Users\monitoramento_desvio\Documents\sv\ajinomoto-monitoramento\label_handler\emit_label.py"
+2025-08-14 09:27:37,718 INFO  - Started process 7452
+2025-08-14 09:27:37,727 DEBUG - Forwarding logs of the process System.Diagnostics.Process (python) to WinSW.SizeBasedRollingLogAppender
+2025-08-14 09:28:10,268 DEBUG - Starting WinSW in service mode
+2025-08-14 09:28:10,370 INFO  - Starting C:\Users\monitoramento_desvio\AppData\Local\Programs\Python\Python310\python.exe "C:\Users\monitoramento_desvio\Documents\sv\ajinomoto-monitoramento\label_handler\emit_label.py"
+2025-08-14 09:28:10,389 INFO  - Started process 2196
+2025-08-14 09:28:10,397 DEBUG - Forwarding logs of the process System.Diagnostics.Process (python) to WinSW.SizeBasedRollingLogAppender
+2025-08-14 09:28:42,976 DEBUG - Starting WinSW in service mode
+2025-08-14 09:28:43,075 INFO  - Starting C:\Users\monitoramento_desvio\AppData\Local\Programs\Python\Python310\python.exe "C:\Users\monitoramento_desvio\Documents\sv\ajinomoto-monitoramento\label_handler\emit_label.py"
+2025-08-14 09:28:43,096 INFO  - Started process 25412
+2025-08-14 09:28:43,110 DEBUG - Forwarding logs of the process System.Diagnostics.Process (python) to WinSW.SizeBasedRollingLogAppender
+2025-08-14 09:29:15,693 DEBUG - Starting WinSW in service mode
+2025-08-14 09:29:15,789 INFO  - Starting C:\Users\monitoramento_desvio\AppData\Local\Programs\Python\Python310\python.exe "C:\Users\monitoramento_desvio\Documents\sv\ajinomoto-monitoramento\label_handler\emit_label.py"
+2025-08-14 09:29:15,810 INFO  - Started process 26048
+2025-08-14 09:29:15,819 DEBUG - Forwarding logs of the process System.Diagnostics.Process (python) to WinSW.SizeBasedRollingLogAppender
+2025-08-14 09:29:48,376 DEBUG - Starting WinSW in service mode
+2025-08-14 09:29:48,475 INFO  - Starting C:\Users\monitoramento_desvio\AppData\Local\Programs\Python\Python310\python.exe "C:\Users\monitoramento_desvio\Documents\sv\ajinomoto-monitoramento\label_handler\emit_label.py"
+2025-08-14 09:29:48,495 INFO  - Started process 8544
+2025-08-14 09:29:48,504 DEBUG - Forwarding logs of the process System.Diagnostics.Process (python) to WinSW.SizeBasedRollingLogAppender
+2025-08-14 09:30:21,073 DEBUG - Starting WinSW in service mode
+2025-08-14 09:30:21,182 INFO  - Starting C:\Users\monitoramento_desvio\AppData\Local\Programs\Python\Python310\python.exe "C:\Users\monitoramento_desvio\Documents\sv\ajinomoto-monitoramento\label_handler\emit_label.py"
+2025-08-14 09:30:21,206 INFO  - Started process 24240
+2025-08-14 09:30:21,215 DEBUG - Forwarding logs of the process System.Diagnostics.Process (python) to WinSW.SizeBasedRollingLogAppender
+2025-08-14 09:30:53,776 DEBUG - Starting WinSW in service mode
+2025-08-14 09:30:53,875 INFO  - Starting C:\Users\monitoramento_desvio\AppData\Local\Programs\Python\Python310\python.exe "C:\Users\monitoramento_desvio\Documents\sv\ajinomoto-monitoramento\label_handler\emit_label.py"
+2025-08-14 09:30:53,894 INFO  - Started process 3176
+2025-08-14 09:30:53,904 DEBUG - Forwarding logs of the process System.Diagnostics.Process (python) to WinSW.SizeBasedRollingLogAppender
+2025-08-19 10:31:05,464 DEBUG - Starting WinSW in service mode
+2025-08-19 10:31:05,608 INFO  - Starting C:\Users\monitoramento_desvio\AppData\Local\Programs\Python\Python310\python.exe "C:\Users\monitoramento_desvio\Documents\sv\ajinomoto-monitoramento\label_handler\emit_label.py"
+2025-08-19 10:31:06,056 INFO  - Started process 16100
+2025-08-19 10:31:06,076 DEBUG - Forwarding logs of the process System.Diagnostics.Process (python) to WinSW.SizeBasedRollingLogAppender
