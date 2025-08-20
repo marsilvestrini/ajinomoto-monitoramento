@@ -111,6 +111,17 @@
       "db_command_alertas": "self.startTracker.alertPassoStart + self.palletTracker.alertPassoCollor + self.pacoteTracker.alertPassoProduto + self.stretchTracker.alertPassoStretch + self.finishTracker.alertPassoFinish"
     },
     {
+      "nome": "palete_fechado_mole_fs",
+      "info": [
+        {"expected_macacao_color": "macacao_branco"},
+        {"expected_pallet_color": "laranja"},
+        {"expected_pallet_class": "pallet_descoberto"}
+      ],
+      "ordem": "[self.startTracker, self.macacaoTracker, self.palletTracker, self.pacoteTracker, self.stretchTracker, self.finishTracker]",
+      "db_command_etapas": "[self.startTracker.statusPassoStart, self.palletTracker.statusPassoCollor, self.pacoteTracker.statusPassoProduto, self.stretchTracker.statusPassoStretch, self.finishTracker.statusPassoFinish, None, None]",
+      "db_command_alertas": "self.startTracker.alertPassoStart + self.palletTracker.alertPassoCollor + self.pacoteTracker.alertPassoProduto + self.stretchTracker.alertPassoStretch + self.finishTracker.alertPassoFinish"
+    },
+    {
       "nome": "palete_fechado_mole",
       "info": [
         {"expected_macacao_color": "macacao_branco"},
