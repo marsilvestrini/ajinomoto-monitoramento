@@ -54,6 +54,20 @@ if not os.path.exists("recordings"):
 
 # --- CLASSES DE MANIPULAÇÃO DE ESTADO ---
 
+class SkipHandler:
+    isSkipped = False
+
+    @classmethod
+    def get_isSkipped_value(cls):
+        return cls.isSkipped
+
+    @classmethod
+    def set_isSkipped_value(cls, new_isSkipped_value):
+        cls.isSkipped = new_isSkipped_value
+
+    @classmethod
+    def reset_isSkipped_value(cls):
+        cls.isSkipped = False
 
 class CancelHandler:
     isCanceled = False
@@ -196,6 +210,12 @@ class InspectProcedure:
             )
             self.cancel_procedure()
             return
+        
+        if SkipHandler.get_isSkipped_value():
+            if self.current_tracker:
+                logging.info(f"[InspectProcedure] Forçando avanço (skip) para o tracker: {self.current_tracker.__class__.__name__}")
+                self.current_tracker.skip() 
+                SkipHandler.reset_isSkipped_value() 
 
         if self.current_tracker is None or not self.current_tracker.isSpecting:
             if self.current_tracker is not None:
@@ -348,6 +368,19 @@ class InspectProcedure:
 
 # --- ROTAS FLASK E THREADS ---
 
+@app.route("/skip_step", methods=['POST'])
+@cross_origin()
+def skip_step():
+    """
+    Recebe uma requisição para forçar o avanço (skip) da etapa atual.
+    """
+    logging.info("[API] Recebida requisição para avançar a etapa (skip).")
+    SkipHandler.set_isSkipped_value(True)
+    return Response(
+        json.dumps({"status": "success", "message": "Sinal de skip recebido."}),
+        status=200,
+        mimetype="application/json"
+    )
 
 @app.route("/video_feed")
 @cross_origin()
