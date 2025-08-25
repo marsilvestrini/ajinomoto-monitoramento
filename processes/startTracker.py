@@ -40,6 +40,20 @@ class StartTracker:
         # Definir a ROI (x, y, width, height)
         self.roi_x, self.roi_y, self.roi_width, self.roi_height = 375, 176, 205, 319
 
+    def skip(self):
+        print("[StartTracker] Etapa avançada via comando skip.")
+        
+        self.statusPassoStart = True 
+        
+        json_to_send = {
+            "Posicionar na demarcação azul (área de chegada) de matéria prima": self.statusPassoStart,
+            "skip": True  
+        }
+        
+        self.messenger_passos.send_message(json_to_send)
+        
+        self.isSpecting = False
+
     def process_video(self, frame):
         try:
             if self.timeout_start is None:

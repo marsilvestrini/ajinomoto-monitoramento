@@ -42,6 +42,21 @@ class FinishTracker:
         # Definir a ROI (x, y, width, height)
         self.roi_x, self.roi_y, self.roi_width, self.roi_height = 177, 176, 201, 319
 
+    
+    def skip(self):
+        print("[FinishTracker] Etapa avançada via comando skip.")
+        
+        self.statusPassoFinish = True 
+        
+        json_to_send = {
+            "Transferir o palete para fora da área de manipulação": self.statusPassoFinish,
+            "skip": True  
+        }
+        
+        self.messenger_passos.send_message(json_to_send)
+        
+        self.isSpecting = False
+
     def process_video(self, frame):
         try:
             if self.timeout_start is None:

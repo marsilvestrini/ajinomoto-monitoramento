@@ -38,6 +38,20 @@ class MacacaoTracker:
             self.dados["required_times"][0]["spectingMacacao"] - 1
         )  # Segundos necessários sem detecção para confirmar remoção
 
+    def skip(self):
+        print("[MacacaoTracker] Etapa avançada via comando skip.")
+        
+        self.statusPassoMacacao = True 
+        
+        json_to_send = {
+            "Colocar o macacão azul para manusear o material": self.statusPassoMacacao,
+            "skip": True  
+        }
+        
+        self.messenger_passos.send_message(json_to_send)
+        
+        self.isSpecting = False
+
     def process_video(self, frame):
         try:
             if self.timeout_start is None:

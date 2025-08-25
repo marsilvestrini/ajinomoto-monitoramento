@@ -63,6 +63,20 @@ class PacoteTracker:
         print(
             f"[PacoteTracker] Tempo para emissão de alerta de etiqueta: {self.max_etiqueta_gap}"
         )
+    
+    def skip(self):
+        print("[PacoteTracker] Etapa avançada via comando skip.")
+        
+        self.statusPassoProduto = True 
+        
+        json_to_send = {
+            "Descarregar os produtos": self.statusPassoProduto,
+            "skip": True 
+        }
+        
+        self.messenger_passos.send_message(json_to_send)
+        
+        self.isSpecting = False
 
     def is_inside_roi(self, box, roi):
         x1, y1, x2, y2 = box

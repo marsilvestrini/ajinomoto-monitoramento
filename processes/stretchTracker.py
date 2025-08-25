@@ -37,6 +37,20 @@ class StretchTracker:
         self.required_time = (
             self.dados["required_times"][0]["spectingStrech"] - 1
         )  # Segundos necessários para interromper a inspeção
+    
+    def skip(self):
+        print("[StretchTracker] Etapa avançada via comando skip.")
+        
+        self.statusPassoStretch = True 
+        
+        json_to_send = {
+            "Strechar o palete de plástico": self.statusPassoStretch,
+            "skip": True  
+        }
+        
+        self.messenger_passos.send_message(json_to_send)
+        
+        self.isSpecting = False
 
     def process_video(self, frame):
         try:

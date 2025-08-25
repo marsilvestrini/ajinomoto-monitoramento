@@ -60,6 +60,20 @@ class PacotePolpaTracker:
             f"[PacotePolpaTracker] Configuração carregada: Tempo presença={self.tempo_presenca}s, Tempo ausência={self.tempo_ausencia}s"
         )
 
+    def skip(self):
+        print("[PacotePolpaTracker] Etapa avançada via comando skip.")
+        
+        self.statusPassoPacotePolpa = True 
+        
+        json_to_send = {
+            "Descarregar os produtos": self.statusPassoPacotePolpa,
+            "skip": True  
+        }
+        
+        self.messenger_passos.send_message(json_to_send)
+        
+        self.isSpecting = False
+
     def is_inside_roi(self, box, roi):
         x1, y1, x2, y2 = box
         center_x, center_y = (x1 + x2) // 2, (y1 + y2) // 2

@@ -44,6 +44,20 @@ class LabelPolpaTracker:
 
         # print("[LabelPolpaTracker] Inicialização completa.")
 
+    def skip(self):
+        print("[LabelPolpaTracker] Etapa avançada via comando skip.")
+        
+        self.statusPassoLabelPolpa = True 
+        
+        json_to_send = {
+            "Recolar a UC": self.statusPassoLabelPolpa,
+            "skip": True  
+        }
+        
+        self.messenger_passos.send_message(json_to_send)
+        
+        self.isSpecting = False
+
     def process_video(self, frame):
         try:
             if not self.isSpecting:

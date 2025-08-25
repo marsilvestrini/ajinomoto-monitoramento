@@ -1,0 +1,8 @@
+criar rota http skip_step basi receber "True"
+
+-> avançar o procedimento
+
+-> mandar na rota padrão de procedimento um novo campo "skip: True"
+
+
+-> deploy do pallet fecchado mole fs
