@@ -64,6 +64,51 @@ class PalletTracker:
         self.required_time_color = (
             self.dados["required_times"][0]["spectingPalletColor"] - 1
         )
+    
+    def skip(self):
+        """
+        Força o avanço da sub-etapa ATUAL do PalletTracker.
+        - Se estiver verificando a cor, avança para a verificação da classe.
+        - Se estiver verificando a classe, finaliza o tracker por completo.
+        """
+        
+        if self.spectingColor:
+            print("[PalletTracker] Avançando a etapa de verificação de COR via skip.")
+            
+            self.statusPassoCollor = True
+            json_to_send_color = {
+                f"Posicionar o palete {self.expected_color} na área amarela (área de destino)": self.statusPassoCollor,
+                "skip": True
+            }
+            self.messenger_passos.send_message(json_to_send_color)
+
+            self.spectingColor = False
+            self.spectingPlastic = True
+            
+            self.start_time = None
+            self.timeout_start = time.time()
+            
+            if self.expected_pallet_class == "pallet_descoberto":
+                print("[PalletTracker] Próxima etapa (Classe Pallet) não é necessária, encerrando o tracker.")
+                self.spectingPlastic = False
+                self.isSpecting = False
+            
+        elif self.spectingPlastic:
+            print("[PalletTracker] Avançando a etapa de verificação de CLASSE DE PALLET via skip.")
+
+            if self.expected_pallet_class != "pallet_descoberto":
+                self.statusPassoClassePallet = True
+                json_to_send_plastic = {
+                    "Colocar uma camada de filme de cobertura sobre o palete plástico (vazio)": self.statusPassoClassePallet,
+                    "skip": True
+                }
+                self.messenger_passos.send_message(json_to_send_plastic)
+            
+            self.spectingPlastic = False
+            self.isSpecting = False
+
+        else:
+            print("[PalletTracker] Comando skip recebido, mas nenhuma sub-etapa ativa para avançar.")
 
     def closest_color(self, rgb):
         min_distance = float("inf")
