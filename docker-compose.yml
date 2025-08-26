@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  ajinomoto-dev:
+    image: ajinomoto-dev
+    build: .
+    container_name: ajinomoto-dev
+    ports:
+      - "5000:5000"
+    # Adiciona a seção de volumes para sincronizar a pasta atual com /app no contêiner
+    volumes:
+      - .:/app
+    restart: unless-stopped
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
