@@ -38,7 +38,7 @@ class PalletTracker:
             "branco": (200, 205, 200),
             "vazio": (146, 155, 153),
             "amarelo_coberto": (114, 221, 240),
-            "verde_polpa": (114, 121, 217),
+            "verde_polpa": (56, 146, 6),
         }
 
         # self.roi_color = [215, 161, 120, 246]  # ROI para verificação de cor
