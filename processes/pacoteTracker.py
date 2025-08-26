@@ -64,14 +64,15 @@ class PacoteTracker:
             f"[PacoteTracker] Tempo para emissão de alerta de etiqueta: {self.max_etiqueta_gap}"
         )
     
-    def skip(self):
+    def skip(self, skipJustification):
         print("[PacoteTracker] Etapa avançada via comando skip.")
         
         self.statusPassoProduto = True 
         
         json_to_send = {
             "Descarregar os produtos": self.statusPassoProduto,
-            "skip": True 
+            "skip": True,
+            "justification": skipJustification
         }
         
         self.messenger_passos.send_message(json_to_send)

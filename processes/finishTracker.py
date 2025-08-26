@@ -43,14 +43,15 @@ class FinishTracker:
         self.roi_x, self.roi_y, self.roi_width, self.roi_height = 177, 176, 201, 319
 
     
-    def skip(self):
+    def skip(self, skipJustification):
         print("[FinishTracker] Etapa avançada via comando skip.")
         
         self.statusPassoFinish = True 
         
         json_to_send = {
             "Transferir o palete para fora da área de manipulação": self.statusPassoFinish,
-            "skip": True  
+            "skip": True,
+            "justification": skipJustification 
         }
         
         self.messenger_passos.send_message(json_to_send)

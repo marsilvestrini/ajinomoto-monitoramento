@@ -65,7 +65,7 @@ class PalletTracker:
             self.dados["required_times"][0]["spectingPalletColor"] - 1
         )
     
-    def skip(self):
+    def skip(self, skipJustification):
         """
         Força o avanço da sub-etapa ATUAL do PalletTracker.
         - Se estiver verificando a cor, avança para a verificação da classe.
@@ -78,7 +78,8 @@ class PalletTracker:
             self.statusPassoCollor = True
             json_to_send_color = {
                 f"Posicionar o palete {self.expected_color} na área amarela (área de destino)": self.statusPassoCollor,
-                "skip": True
+                "skip": True,
+                "justification": skipJustification
             }
             self.messenger_passos.send_message(json_to_send_color)
 
@@ -100,7 +101,8 @@ class PalletTracker:
                 self.statusPassoClassePallet = True
                 json_to_send_plastic = {
                     "Colocar uma camada de filme de cobertura sobre o palete plástico (vazio)": self.statusPassoClassePallet,
-                    "skip": True
+                    "skip": True,
+                    "justification": skipJustification
                 }
                 self.messenger_passos.send_message(json_to_send_plastic)
             

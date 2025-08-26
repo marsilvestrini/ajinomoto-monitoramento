@@ -38,14 +38,15 @@ class MacacaoTracker:
             self.dados["required_times"][0]["spectingMacacao"] - 1
         )  # Segundos necessários sem detecção para confirmar remoção
 
-    def skip(self):
+    def skip(self, skipJustification):
         print("[MacacaoTracker] Etapa avançada via comando skip.")
         
         self.statusPassoMacacao = True 
         
         json_to_send = {
             "Colocar o macacão azul para manusear o material": self.statusPassoMacacao,
-            "skip": True  
+            "skip": True,
+            "justification": skipJustification
         }
         
         self.messenger_passos.send_message(json_to_send)

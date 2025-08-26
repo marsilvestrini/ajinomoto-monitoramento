@@ -60,14 +60,15 @@ class PacotePolpaTracker:
             f"[PacotePolpaTracker] Configuração carregada: Tempo presença={self.tempo_presenca}s, Tempo ausência={self.tempo_ausencia}s"
         )
 
-    def skip(self):
+    def skip(self, skipJustification):
         print("[PacotePolpaTracker] Etapa avançada via comando skip.")
         
         self.statusPassoPacotePolpa = True 
         
         json_to_send = {
             "Descarregar os produtos": self.statusPassoPacotePolpa,
-            "skip": True  
+            "skip": True,
+            "justification": skipJustification  
         }
         
         self.messenger_passos.send_message(json_to_send)

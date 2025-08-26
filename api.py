@@ -15,7 +15,7 @@ from datetime import datetime
 from video_config.video_capture_v2 import VideoCapture
 from dotenv import load_dotenv
 import os
-from flask import Flask, Response
+from flask import Flask, Response, request
 from threading import Thread, Lock
 from queue import Queue, Empty
 import time
@@ -56,6 +56,7 @@ if not os.path.exists("recordings"):
 
 class SkipHandler:
     isSkipped = False
+    skipJustification = ''
 
     @classmethod
     def get_isSkipped_value(cls):
@@ -68,6 +69,18 @@ class SkipHandler:
     @classmethod
     def reset_isSkipped_value(cls):
         cls.isSkipped = False
+    
+    @classmethod
+    def get_skipJustification_value(cls):
+        return cls.skipJustification
+    
+    @classmethod
+    def set_skipJustification_value(cls, newSkipJustificationValue):
+        cls.skipJustification = newSkipJustificationValue
+    
+    @classmethod
+    def reset_skipJustification_value(cls):
+        cls.skipJustification = ''
 
 class CancelHandler:
     isCanceled = False
@@ -214,8 +227,9 @@ class InspectProcedure:
         if SkipHandler.get_isSkipped_value():
             if self.current_tracker:
                 logging.info(f"[InspectProcedure] Forçando avanço (skip) para o tracker: {self.current_tracker.__class__.__name__}")
-                self.current_tracker.skip() 
-                SkipHandler.reset_isSkipped_value() 
+                self.current_tracker.skip(SkipHandler.get_skipJustification_value()) 
+                SkipHandler.reset_isSkipped_value()
+                SkipHandler.reset_skipJustification_value() 
 
         if self.current_tracker is None or not self.current_tracker.isSpecting:
             if self.current_tracker is not None:
@@ -372,12 +386,30 @@ class InspectProcedure:
 @cross_origin()
 def skip_step():
     """
-    Recebe uma requisição para forçar o avanço (skip) da etapa atual.
+    Recebe uma requisição para forçar o avanço (skip) da etapa atual,
+    incluindo uma justificativa.
     """
     logging.info("[API] Recebida requisição para avançar a etapa (skip).")
+
+    data = request.get_json()
+
+    if not data or 'justification' not in data:
+        logging.error("[API] Requisição de skip sem o campo 'justification'.")
+        return Response(
+            json.dumps({
+                "status": "error",
+                "message": "O campo 'justification' é obrigatório no corpo da requisição."
+            }),
+            status=400, 
+            mimetype="application/json"
+        )
+    justification = data['justification']
+    logging.info(f"[API] Justificativa para o skip: '{justification}'")
+
+    SkipHandler.set_skipJustification_value(justification)
     SkipHandler.set_isSkipped_value(True)
     return Response(
-        json.dumps({"status": "success", "message": "Sinal de skip recebido."}),
+        json.dumps({"status": "success", "message": "Sinal de skip recebido com sucesso."}),
         status=200,
         mimetype="application/json"
     )
